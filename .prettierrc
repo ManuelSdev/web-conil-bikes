@@ -1,0 +1,11 @@
+{
+   "semi": false,
+   "trailingComma": "es5",
+   "singleQuote": true,
+   "tabWidth": 3,
+   "useTabs": false,
+   "plugins": ["prettier-plugin-tailwindcss"],
+   "tailwindConfig": "./tailwind.config.ts",
+   "tailwindFunctions": ["clsx"],
+   "quoteProps": "preserve"
+}
