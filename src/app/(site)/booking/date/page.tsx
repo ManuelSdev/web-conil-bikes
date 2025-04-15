@@ -10,7 +10,10 @@ import StepShell from '@/components/stepper/StepShell'
 import NotifyCart from '@/components/stepper/notifyCart/NotifyCart'
 
 export default async function DateStepPage({ params }) {
-   const userSessionCookie = cookies().get('userSession')
+   const cookieStore = await cookies()
+
+   const userSessionCookie = cookieStore.get('userSession')
+
    //console.log('userSessionCookie ', userSessionCookie)
    return (
       <StepShell

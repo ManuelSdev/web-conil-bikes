@@ -17,7 +17,8 @@ export async function GET(req) {
          httpOnly: true,
          secure: true,
       }
-      cookies().set(name, value, cookieOptions)
+      const cookieStore = await cookies()
+      cookieStore.set(name, value, cookieOptions)
       return Response.json({ succes: true })
       // cookies().delete('resolvedUrl')
       //  return { result: { success: true }, status: { status: 200 } }

@@ -52,7 +52,12 @@ export const findAvailableBikes = async ({ dateRange, size, type, range }) => {
 export const findAppBikeConfigSegments = async () => {
    const text =
       'SELECT model_type as "modelType", model_range as "modelRange", segment_price as "segmentPrice" FROM Segment'
-   const { rows } = await query({ text })
+   //const { rows } = await query({ text })
    //console.log('rows en findBikeConfigSegments -> ', rows)
-   return rows
+   try {
+      const { rows } = await query({ text })
+      return rows
+   } catch (error) {
+      console.log('### ERROR CRUD api/getBikeConfigSegments -> ', error)
+   }
 }

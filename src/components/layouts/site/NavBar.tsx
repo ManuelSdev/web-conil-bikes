@@ -1,4 +1,5 @@
 // @ts-nocheck
+// @ts-nocheck
 'use client'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'

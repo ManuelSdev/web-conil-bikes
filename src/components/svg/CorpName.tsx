@@ -1,4 +1,5 @@
 // @ts-nocheck
+// @ts-nocheck
 import { cn } from '@/lib/utils'
 
 //https://stackoverflow.com/questions/76301842/how-do-i-import-an-animated-svg-file-in-next-js-13-while-maintaining-transparenc

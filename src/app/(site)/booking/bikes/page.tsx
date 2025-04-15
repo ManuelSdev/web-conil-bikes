@@ -27,8 +27,11 @@ import BikesStepHandlerTest from '@/components/stepper/bikes/BikesStepHandlerTes
  * https://github.com/vercel/next.js/discussions/54075
  */
 export default async function BikesStepPage({ params }) {
-   const searchKeysCookie = cookies().get('searchKeys')
-   const resolvedUrlCookie = cookies().get('resolvedUrl')
+   const cookieStore = await cookies()
+   const searchKeysCookie = cookieStore.get('searchKeys')
+   const resolvedUrlCookie = cookieStore.get('resolvedUrl')
+   //corre
+
    console.log('searchKeysCookie ', searchKeysCookie)
    //const selectedBikeCookie = cookies().get('selectedBike')
 

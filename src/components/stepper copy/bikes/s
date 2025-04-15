@@ -1,0 +1,27 @@
+/*
+   useEffect(() => {
+      /**
+       * Si vengo redireccionado de un login correcto, habráy una búsqueda previa (searchKeys):
+       *  la cargo en el estado y borro la cookie de búsqueda searchKeys
+       * También habrá una bicicleta seleccionada, la cargo en el estado
+       *  y borro la  selectedBike del local storage
+       */
+      if (searchKeys && loadedSegmentList && isLogged) {
+         deleteCookie('searchKeys')
+         const selectedBikeJson = window.localStorage.getItem('selectedBike')
+
+         if (selectedBikeJson) {
+            console.log('selectedBikeJson ->', selectedBikeJson)
+            const selectedBike = JSON.parse(selectedBikeJson)
+            window.localStorage.removeItem('selectedBike')
+            // deleteCookie('selectedBike')
+            console.log('selectedBike ->', selectedBike)
+            //  dispatch(searchKeysLoaded(searchKeys))
+            //  console.log('selectedBike ->', selectedBike)
+            selectedBike && dispatch(bikeSelected(selectedBike))
+         }
+      }
+
+      // return () => window.localStorage.removeItem('selectedBike')
+   }, [loadedSegmentList])
+*/
