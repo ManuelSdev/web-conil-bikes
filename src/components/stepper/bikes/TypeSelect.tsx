@@ -37,33 +37,12 @@ export default function TypeSelect({
    handleChange,
    isLoadingTypes,
    className,
-   disabled,
-   loadedType,
-   selectKey,
+   selectedSize,
+
+   // selectKey,
 }) {
-   //console.log('isLoadingTypes IN TypeSelect @->', isLoadingTypes)
-
-   /*
-   useEffect(() => {
-      loadedType && form.setValue('type', loadedType)
-   }, [])
-*/
    const typeArray = [...typeMap.entries()] // Convertir el Map en un array antes de iterar
-
-   const [types, setTypes] = useState(null)
-   /*
-   useEffect(() => {
-      form.resetField('type')
-   }, [isLoadingTypes])
-   */
-   /*
-   useEffect(() => {
-      if (availableTypes) {
-         setTypes(availableTypes)
-      }
-
-   }, [availableTypes])*/
-   console.log('selectKey', selectKey)
+   const { size, type } = form.watch()
    return (
       <FormField
          control={form.control}
@@ -72,15 +51,12 @@ export default function TypeSelect({
             <FormItem className={className}>
                <FormLabel>Tipo</FormLabel>
                <Select
-                  key={selectKey}
-                  //      disabled={isLoadingTypes || !availableTypes}
+                  key={size}
                   onValueChange={handleChange(field)}
-                  //defaultValue={loadedType ? loadedType : field.value}
                   defaultValue={field.value}
-                  // value="sssss"
                >
                   <FormControl>
-                     <SelectTrigger>
+                     <SelectTrigger className="w-auto">
                         {isLoadingTypes ? (
                            <SpinnerLine />
                         ) : field.value ? (

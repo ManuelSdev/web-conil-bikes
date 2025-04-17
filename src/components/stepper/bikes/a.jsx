@@ -1,4 +1,3 @@
-// @ts-nocheck
 //@ts-nocheck
 'use client'
 
@@ -25,8 +24,8 @@ import {
    SelectValue,
 } from '@/components/ui/select'
 import React, { use, useEffect } from 'react'
-import { rangeMap } from '@/utils/appValues'
-import { capitalizeFirst, mappedBikeRange } from '@/utils/functions'
+import { BIKE_RANGES_MAP, rangesList, sizesList } from '@/utils/app/appValues'
+import { capitalizeFirst } from '@/utils/app/functions'
 import SpinnerLine from '@/components/common/SpinnerLine'
 
 export default function RangeSelect({
@@ -34,22 +33,37 @@ export default function RangeSelect({
    availableRanges,
    handleChange,
    segmentList,
-
+   selectedType,
    className,
+   disabled,
    isLoadingRange,
+   isLoadingTypes,
+   loadedRange,
+   rangeKey,
 }) {
-   const { size, type } = form.watch()
-   const rangeArray = [...rangeMap.entries()] // Convertir el Map en un array antes de la iteración
-
+   /*
+   const segmentList = useSelector(selectDatabaseInfoSegmentList)
+*/
    const rangeInfo = (range) => {
       let price
       segmentList.forEach((segment) => {
-         if (type == segment.modelType && range == segment.modelRange)
+         if (selectedType == segment.modelType && range == segment.modelRange)
             price = segment.segmentPrice
       })
-      return price ? `${price} €/día` : 'no disponible'
+      return price ? `${price} €/día` : 'Gama no disponible'
    }
+   //console.log('LOADING RANGE @->', isLoadingRange)
 
+   /*
+   useEffect(() => {
+      loadedRange && form.setValue('range', loadedRange)
+   }, [])
+   */
+   /*
+   useEffect(() => {
+      ;(isLoadingRange || isLoadingTypes) && form.resetField('range')
+   }, [isLoadingRange, isLoadingTypes])
+*/
    return (
       <FormField
          control={form.control}
@@ -58,14 +72,14 @@ export default function RangeSelect({
             <FormItem className={className}>
                <FormLabel>Gama</FormLabel>
                <Select
-                  //Al cambiar size o type, se vuelve a cargar el select
-                  // y "gama" se pone oscuro
-                  key={size + type}
+                  key={rangeKey}
                   onValueChange={handleChange(field)}
+                  // defaultValue={loadedRange ? loadedRange : field.value}
                   defaultValue={field.value}
+                  // value={field.value}
                >
                   <FormControl>
-                     <SelectTrigger className="w-auto">
+                     <SelectTrigger>
                         {isLoadingRange ? (
                            <SpinnerLine />
                         ) : field.value ? (
@@ -79,21 +93,23 @@ export default function RangeSelect({
                      </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                     {rangeArray.map(([engRange, spaRange]) => (
-                        <SelectItem
-                           disabled={
-                              availableRanges
-                                 ? !availableRanges.includes(engRange)
-                                 : true
-                           }
-                           key={engRange}
-                           value={engRange}
-                        >
-                           {type
-                              ? `${capitalizeFirst(spaRange)} - ${rangeInfo(engRange)}`
-                              : `${capitalizeFirst(spaRange)}`}
-                        </SelectItem>
-                     ))}
+                     {rangesList.map(([engRange, spaRange]) => {
+                        return (
+                           <SelectItem
+                              disabled={
+                                 availableRanges
+                                    ? !availableRanges.includes(engRange)
+                                    : true
+                              }
+                              key={engRange}
+                              value={engRange}
+                           >
+                              {`${capitalizeFirst(spaRange)} - ${rangeInfo(
+                                 engRange
+                              )}`}
+                           </SelectItem>
+                        )
+                     })}
 
                      {/*  {availableRanges.map((range) => (
                            <SelectItem key={range} value={engRange}>

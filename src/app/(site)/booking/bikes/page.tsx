@@ -21,6 +21,7 @@ import StepShell from '@/components/stepper/StepShell'
 import NotifyCart from '@/components/stepper/notifyCart/NotifyCart'
 import AvailableBikeListHandler from '@/components/stepper/bikes/AvailableBikeListHandler'
 import BikesStepHandlerTest from '@/components/stepper/bikes/BikesStepHandlerTest'
+import { Test } from '@/components/stepper/bikes/Test'
 
 /**
  * CLAVE
@@ -88,6 +89,7 @@ export default async function BikesStepPage({ params }) {
             isLogged={isLogged}
          />
          {/*<NotifyCart page={'bikes'} />*/}
+         <Test />
       </StepShell>
    )
 }

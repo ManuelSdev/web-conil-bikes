@@ -37,14 +37,6 @@ export default function SizeSelect({
    loadedSize,
    loadedData,
 }) {
-   //const loadedSize = loadedSearchKeys?.size
-   console.log('loadedSize', loadedSize)
-   /*
-   useEffect(() => {
-      availableSizes && loadedSize && form.setValue('size', loadedSize)
-   }, [availableSizes])
-*/
-
    const sizeArray = [...sizeMap.entries()] // Convertir sizeMap a un array antes de iterar
 
    return (
@@ -52,17 +44,14 @@ export default function SizeSelect({
          control={form.control}
          name="size"
          render={({ field }) => (
-            // console.log('field -> ', field) ||
             <FormItem className={className}>
                <FormLabel>Talla</FormLabel>
                <Select
                   onValueChange={handleChange(field)}
-                  //defaultValue={loadedSize ? loadedSize : field.value}
                   defaultValue={field.value}
-                  //   defaultValue={field.value}
                >
                   <FormControl>
-                     <SelectTrigger>
+                     <SelectTrigger className="w-auto">
                         {isLoadingSizes ? (
                            <SpinnerLine />
                         ) : field.value ? (
@@ -103,9 +92,11 @@ export default function SizeSelect({
                      ))}
                   </SelectContent>
                </Select>
-               {/* <FormDescription>
-                  Selecciona una talla en función de tu altura
-                  </FormDescription>*/}
+               {
+                  <FormDescription>
+                     Selecciona una talla en función de tu altura
+                  </FormDescription>
+               }
                <FormMessage />
             </FormItem>
          )}

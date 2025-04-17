@@ -177,34 +177,6 @@ useEffect(() => {
    // return () => window.localStorage.removeItem('selectedBike')
 }, [loadedSegmentList])
 */
-   const renderShowBikesButton = ({ size, type, range, className }) =>
-      isFetchingBikes ? (
-         <Button
-            variant="reverse"
-            className={cn(className)}
-
-            //  disabled={!range}
-            //type="submit"
-         >
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Cargando...
-         </Button>
-      ) : (
-         <Button
-            variant="reverse"
-            className={cn(className)}
-            //   className={cn('bg-greenCorp text-black', className)}
-            onClick={() => {
-               dispatch(bikeSearchParamsSelected({ size, type, range }))
-
-               //   setStep(3)
-            }}
-            disabled={!range}
-            //type="submit"
-         >
-            <Search className="mr-2 h-4 w-4" />
-            Mostrar bicicletas
-         </Button>
-      )
 
    const nextUrl = isAdmin
       ? `/dashboard/bookings/new/address?userId=${userId}`
@@ -244,6 +216,34 @@ useEffect(() => {
       dispatch(bikeSelected(bike))
       // setStep(1)
    }
+   const renderShowBikesButton = ({ size, type, range, className }) =>
+      isFetchingBikes ? (
+         <Button
+            variant="reverse"
+            className={cn(className)}
+            //  disabled={!range}
+            //type="submit"
+         >
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Cargando...
+         </Button>
+      ) : (
+         <Button
+            variant="reverse"
+            className={cn(className)}
+            //   className={cn('bg-greenCorp text-black', className)}
+            onClick={() => {
+               dispatch(bikeSearchParamsSelected({ size, type, range }))
+
+               //   setStep(3)
+            }}
+            disabled={!range}
+            //type="submit"
+         >
+            <Search className="mr-2 h-4 w-4" />
+            Mostrar bicicletas
+         </Button>
+      )
+
    return (
       <div>
          <BikeFiltersForm

@@ -124,6 +124,20 @@
    --spacing-slimTopAppBar: calc(var(--topAppBar-height) - 2rem);
    --spacing-fatBarScreen: calc(100vh - var(--topAppBar-height));
    --spacing-slimBarScreen: calc(100vh - calc(var(--topAppBar-height) - 2rem));
+
+   --animate-progress: progress 1s infinite linear;
+
+   @keyframes progress {
+      0% {
+         transform: translateX(0) scaleX(0);
+      }
+      40% {
+         transform: translateX(0) scaleX(0.4);
+      }
+      100% {
+         transform: translateX(100%) scaleX(0.5);
+      }
+   }
 }
 
 @layer base {

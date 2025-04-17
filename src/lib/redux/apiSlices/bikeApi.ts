@@ -30,9 +30,19 @@ export const bikeApi = baseApi.injectEndpoints({
       getAvailableTypes: builder.query({
          query: ({ dateRange, size }) => `bikes/available/${dateRange}/${size}`,
       }),
+      /* Uso mutation para usar el reset de la cache
       getAvailableRanges: builder.query({
          query: ({ dateRange, size, type }) =>
             `bikes/available/${dateRange}/${size}/${type}`,
+         invalidatesTags: ['BikeRanges'],
+      }),
+      */
+      getAvailableRanges: builder.mutation({
+         query: ({ dateRange, size, type }) => ({
+            url: `bikes/available/${dateRange}/${size}/${type}`,
+            method: 'GET', // Especificamos el método GET
+         }),
+         invalidatesTags: ['BikeRanges'], // Mantén las tags si necesitas invalidar el caché
       }),
       getAvailableStock: builder.query({
          query: ({ from, to }) => AV_STOCK + `?${urlParams({ from, to })}`,
@@ -80,8 +90,9 @@ export const {
    useGetAvailableSizesQuery,
    useGetAvailableTypesQuery,
    useLazyGetAvailableTypesQuery,
-   useLazyGetAvailableRangesQuery,
+   //useLazyGetAvailableRangesQuery,
    useGetAvailableRangesQuery,
+   useGetAvailableRangesMutation,
    useGetAvailableBikesQuery,
    useLazyGetAvailableBikesQuery,
    useGetReservedBikeAvailabilityInRangeQuery,

@@ -11,17 +11,20 @@ import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import {
    useGetAvailableBikesQueryState,
+   useGetAvailableRangesMutation,
    useGetAvailableSizesQuery,
-   useLazyGetAvailableRangesQuery,
+   // useLazyGetAvailableRangesQuery,
    useLazyGetAvailableTypesQuery,
 } from '@/lib/redux/apiSlices/bikeApi'
 import { da, de } from 'date-fns/locale'
 import TypeSelect from './TypeSelect'
-import RangeSelect from './RangeSelect'
+
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { urlParams } from '@/utils/functions'
-
+import { urlParams } from '@/utils/app/functions'
+import RangeSelect from './RangeSelect'
+import { useDispatch, useSelector } from 'react-redux'
+import { baseApi } from '@/lib/redux/apiSlices/baseApi'
 const FormSchema = z.object({
    email: z
       .string({
@@ -41,6 +44,8 @@ export default function BikeFiltersForm({
    //form,
    // setStep,
 }) {
+   const dispatch = useDispatch()
+
    console.log('loadedSearchKeys', loadedSearchKeys)
    const loadedSize = loadedSearchKeys?.size
    const loadedType = loadedSearchKeys?.type
@@ -77,7 +82,8 @@ export default function BikeFiltersForm({
       form.setValue('type', loadedSearchKeys.type)
       form.setValue('range', loadedSearchKeys.range)
    }
-   const { size, type, range } = form.getValues()
+   const { size, type, range } = form.watch()
+
    const a = useGetAvailableBikesQueryState({
       dateRange,
       size,
@@ -85,8 +91,6 @@ export default function BikeFiltersForm({
       range,
       //className: 'sm:self-end',
    })
-   console.log('--------------------------------- a @->', form.getValues())
-
    const [
       triggerType,
       {
@@ -97,17 +101,19 @@ export default function BikeFiltersForm({
       },
       lastPromiseInfoTypes,
    ] = useLazyGetAvailableTypesQuery()
-   console.log('lastPromiseInfoTypes ->', lastPromiseInfoTypes)
-
-   //Uso de keys para resetear los select: cambiar la key vuelve a renderizar el componente
-   const [selectKeys, setSelectKeys] = useState({ typeKey: 0, rangeKey: 1 })
-   const { typeKey, rangeKey } = selectKeys
 
    const [
       triggerRange,
-      { data: availableRanges, isFetching: isLoadingRange },
+      { data: availableRanges, isLoading: isLoadingRange, reset: resetRanges },
+   ] = useGetAvailableRangesMutation()
+
+   /* Uso la mutation en lugar de la query
+   const [
+      triggerRange,
+      { data, isFetching: isLoadingRange, originalArgs },
       lastPromiseInfoRanges,
    ] = useLazyGetAvailableRangesQuery()
+    */
 
    const handleClick = (ev) => {
       setStep(1)
@@ -117,61 +123,27 @@ export default function BikeFiltersForm({
       field.onChange(selectedSizeValue)
       form.resetField('type')
       form.resetField('range')
-      setSelectKeys({ rangeKey: selectedSizeValue, typeKey: selectedSizeValue })
-      //form.resetField('type')
-      //form.resetField('range')
-      // form.reset()
-      // setBikeForm({ ...form, size: lastSelectedSize })
-      console.log('## CALL getAvailableSizesInRange FROM BikeFilters ##')
+      availableRanges && resetRanges()
 
       triggerType({ dateRange, size: selectedSizeValue })
    }
 
    const handleType = (field) => (selectedTypeValue) => {
-      //console.log('field -> ', field)
       field.onChange(selectedTypeValue)
       form.resetField('range')
-      setSelectKeys({ ...selectKeys, rangeKey: selectedTypeValue })
-      //  updateBikeForm({ type: selectedTypeValue })
+
       triggerRange({ dateRange, size, type: selectedTypeValue })
    }
 
    const handleRange = (field) => (selectedRangeValue) => {
-      //console.log('selectedRangeValue -> ', selectedRangeValue)
       field.onChange(selectedRangeValue)
-      //updateBikeForm({ range: selectedRangeValue })
-      //  setBikeForm({ ...form, range: lastSelectedRange })
-      // triggerBike({...strDateRange,size,type,range:lastSelectedRange})
    }
 
    const onSubmit = (data, event) => {
       event.preventDefault()
-
       // setStep(1)
    }
-   /*
-   useEffect(() => {
-      if (availableSizes && loadedKeys.loadedSize) {
-         form.setValue('size', loadedKeys.loadedSize)
-         triggerType({ dateRange, size: loadedKeys.loadedSize })
-         setLoadedKeys({ ...loadedKeys, loadedSize: null })
-      }
-   }, [availableSizes])
 
-   useEffect(() => {
-      if (availableTypes && loadedKeys.loadedType) {
-         form.setValue('type', loadedKeys.loadedType)
-         triggerRange({ dateRange, size, type: loadedKeys.loadedType })
-      }
-   }, [availableTypes])
-
-   useEffect(() => {
-      if (availableRanges && loadedKeys.loadedRange) {
-         form.setValue('range', loadedKeys.loadedRange)
-         //triggerRange({ dateRange, size, range: loadedKeys.loadedRange })
-      }
-   }, [availableRanges])
-*/
    //Clave para resetear los select
    //https://github.com/radix-ui/primitives/issues/1569#issuecomment-1434801848
    return (
@@ -188,40 +160,27 @@ export default function BikeFiltersForm({
                form={form}
                selectedSize={size}
                handleChange={handleSizeChange}
-               // isLoading={isLoadingSizes}
-               //     LoadingLabel={LoadingLabel}
                availableSizes={availableSizes}
                {...props}
             />
             <TypeSelect
-               selectKey={typeKey}
-               disabled
                loadedType={loadedKeys.loadedType}
                // className="sm:grow"
                className="sm:min-w-[100px]"
                form={form}
-               selectedSize={size}
-               selectedType={type}
                handleChange={handleType}
                isLoadingTypes={isLoadingTypes}
-               //   LoadingLabel={LoadingLabel}
                availableTypes={availableTypes}
                {...props}
             />
             <RangeSelect
-               key={rangeKey}
                loadedRange={loadedKeys.loadedRange}
-               disabled
                // className="sm:grow"
                className="sm:min-w-[165px]"
                segmentList={segmentList}
                form={form}
-               selectedType={type}
-               selectedRange={range}
                handleChange={handleRange}
-               isLoadingTypes={isLoadingTypes}
                isLoadingRange={isLoadingRange}
-               //  LoadingLabel={LoadingLabel}
                availableRanges={availableRanges}
                {...props}
             />
@@ -240,3 +199,14 @@ export default function BikeFiltersForm({
       </Form>
    )
 }
+/**
+ * Uso una mutation para obtener los rangos disponibles
+ * y no una query porque la query no tiene reset
+ * y la mutation si
+ * reset permite borrar el cache de la query y, al borrar los rangos
+ * disponibles, los select se "apagan" en el desplegable
+ * No necesito reset en los types porque, al cambiar el size,
+ * se hace una nueva petición para los tipos. El problema era
+ * que, cambiando el size, los rangos descargados se mantenían
+ * y dejaban el select activo
+ */
