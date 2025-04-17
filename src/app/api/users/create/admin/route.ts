@@ -4,7 +4,6 @@ import { createAppUser } from '@/lib/pg/crud/users'
 import getWelcomeAdminEmail from '@/lib/react-email/welcomeAdmin'
 import sendGridSendEmail from '@/lib/sendGrid/sendEmail'
 import { generatePassword } from '@/utils/functions'
-import { tr } from 'date-fns/locale'
 
 import { getAuth } from 'firebase-admin/auth'
 import { NextResponse } from 'next/server'

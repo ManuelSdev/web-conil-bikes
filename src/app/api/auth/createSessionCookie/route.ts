@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { app } from '@/lib/firebase/admin/firebaseAdmin'
-import { is } from 'date-fns/locale'
+
 import { getAuth } from 'firebase-admin/auth'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'

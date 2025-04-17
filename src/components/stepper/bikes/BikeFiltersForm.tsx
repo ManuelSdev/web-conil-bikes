@@ -15,7 +15,6 @@ import {
    // useLazyGetAvailableRangesQuery,
    useLazyGetAvailableTypesQuery,
 } from '@/lib/redux/apiSlices/bikeApi'
-import { da, de } from 'date-fns/locale'
 import TypeSelect from './TypeSelect'
 
 import { Button } from '@/components/ui/button'
