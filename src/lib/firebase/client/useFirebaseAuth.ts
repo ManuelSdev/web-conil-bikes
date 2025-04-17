@@ -248,6 +248,7 @@ export default function useFirebaseAuth() {
          setLoading(false)
       }
    }
+
    /**
     * @description dooSignInWithRedirect te redirige a la página de login del provider
     *  (google en este caso). Cuando te logas en esa página, te devuelve a la página
@@ -274,8 +275,22 @@ export default function useFirebaseAuth() {
       //Solución proxy inverso en next: rewrite en next.config.js
       //https://stackoverflow.com/questions/75349917/confirmation-of-why-cross-origin-problems-occur-when-using-signinwithredirect-ar
       //https://community.fly.io/t/reverse-proxy-to-firebase-authentication-for-simple-nextjs-app/12013/2
-      await signInWithRedirect(auth, provider)
+      try {
+         await signInWithRedirect(auth, provider)
+      } catch (error) {
+         // Handle Errors here.
+         console.log('error en doSignInWithRedirect -> ', error)
+         /*
+         const errorCode = error.code
+         const errorMessage = error.message
+         // The email of the user's account used.
+         const email = error.customData.email
+         // The AuthCredential type that was used.
+         const credential = GoogleAuthProvider.credentialFromError(error)
+         */
+      }
    }
+
    //TODO: admin.auth().updateUser(uid, { emailVerified: true }) cuando haces el login con google
    /**
     * @description getRedirectResult recupera la información del login recien hecho en la página
@@ -295,8 +310,9 @@ export default function useFirebaseAuth() {
    const doGetRedirectResult = async () => {
       try {
          const deleteCookie = await deleteCookieTrigger('signInWithRedirect')
-
+         console.log('doGetRedirectResult auth -> ', auth)
          const result = await getRedirectResult(auth)
+         console.log('result -> ', result)
          if (!result) {
             return console.log(
                'CUSTOM RETURN doGetRedirectResult: No hay result'

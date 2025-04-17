@@ -1,7 +1,6 @@
 // @ts-nocheck
-import GoogleAuthCheckPageHandler from '@/components/auth/GoogleAuthCheckPageHandler'
 import React from 'react'
-
+import GoogleAuthCheckPageHandler from '../GoogleAuthCheckPageHandler'
 export default function GoogleAuthCheckPage() {
    return <GoogleAuthCheckPageHandler />
 }

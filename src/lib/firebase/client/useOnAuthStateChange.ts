@@ -15,7 +15,7 @@ const useOnAuthStateChange = () => {
    const [loading, setLoading] = useState(true)
 
    const authStateChanged = async (authState) => {
-      //console.log('useOnAuthStateChange authState->', authState)
+      console.log('useOnAuthStateChange authState->', authState)
       if (!authState) {
          setAuthUser(null)
          setLoading(false)

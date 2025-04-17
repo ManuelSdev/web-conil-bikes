@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 
 export async function GET(req) {
    const searchParams = req.nextUrl.searchParams
-   //console.log('searchParams ', searchParams)
+   console.log('searchParams????????????????????????', searchParams)
    const name = searchParams.get('name')
    const value = searchParams.get('value')
    const maxAge = searchParams.get('maxAge')

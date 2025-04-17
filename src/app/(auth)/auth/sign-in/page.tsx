@@ -8,7 +8,9 @@ export default async function UserSignInPage({ searchParams }) {
     * Tienes signInWithRedirect en cookie cuando vienes redireccionado desde
     * desde la página de login del provider de autenticación
     */
-   const isSignInWithRedirect = cookies().has('signInWithRedirect')
+   const cookieStore = await cookies()
+
+   const isSignInWithRedirect = cookieStore.has('signInWithRedirect')
    if (isSignInWithRedirect) {
       return redirect('/auth/checking')
    }

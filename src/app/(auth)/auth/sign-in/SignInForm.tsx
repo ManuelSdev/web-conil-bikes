@@ -15,13 +15,14 @@ import {
    FormLabel,
    FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+
 import { toast } from '@/components/ui/use-toast'
 import React from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import useFirebaseAuth from '@/lib/firebase/client/useFirebaseAuth'
 
 import GoogleIcon from '@/components/svg/GoogleIcon'
+import { Input } from '@/components/ui/input'
 
 const FormSchema = z.object({
    username: z.string().min(2, {

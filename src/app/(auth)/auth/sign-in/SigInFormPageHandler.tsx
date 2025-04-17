@@ -5,14 +5,16 @@
 import React from 'react'
 import { SignInForm } from './SignInForm'
 import useFirebaseAuth from '@/lib/firebase/client/useFirebaseAuth'
-import AuthFormCard from './AuthFormCard'
-import { Button } from '../ui/button'
-import GoogleIcon from '../svg/GoogleIcon'
+import AuthFormCard from '../AuthFormCard'
+
+import GoogleIcon from '@/components/svg/GoogleIcon'
 import Link from 'next/link'
-import { DialogWindow } from '../common/DialogWindow'
-import useDialogWindow from '../common/useDialogWindow'
+
 import { signInErrorHandler } from '@/lib/firebase/client/authErrorHandler'
 import { useRouter } from 'next/navigation'
+import { DialogWindow } from '@/components/common/DialogWindow'
+import useDialogWindow from '@/components/common/useDialogWindow'
+import { Button } from '@/components/ui/button'
 
 export default function SigInFormPageHandler({ isAdmin }) {
    //console.log('@@ RENDER SigInFormPageHandler @@')
