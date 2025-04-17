@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-
 import { Button } from '@/components/ui/button'
 import {
    Form,
@@ -25,10 +24,8 @@ import {
    SelectValue,
 } from '@/components/ui/select'
 import React, { useEffect, useState } from 'react'
-
 import { capitalizeFirst } from '@/utils/functions'
 import SpinnerLine from '@/components/common/SpinnerLine'
-import { is } from 'date-fns/locale'
 import { typeMap } from '@/utils/appValues'
 
 export default function TypeSelect({
