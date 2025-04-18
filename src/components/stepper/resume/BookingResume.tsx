@@ -1,6 +1,22 @@
 // @ts-nocheck
 import { BIKE_RANGES_MAP, BIKE_TYPES_MAP } from '@/utils/appValues'
 import React from 'react'
+
+import { add, format } from 'date-fns'
+import Image from 'next/image'
+import { Separator } from '@/components/ui/separator'
+import clsx from 'clsx'
+import { cn } from '@/utils/functions'
+/*
+import {
+   UserCircle,
+   Envelope,
+   Phone,
+   MapPin,
+   Bicycle,
+   ArrowRight,
+   ArrowUDownLeft,
+} from '@phosphor-icons/react'
 import {
    CheckIcon,
    ClockIcon,
@@ -13,25 +29,23 @@ import {
    CreditCardIcon,
    UserCircleIcon,
 } from '@heroicons/react/20/solid'
-import { Mail } from 'lucide-react'
-import { User } from 'lucide-react'
-import { CalendarDays } from 'lucide-react'
-
-import { add, format } from 'date-fns'
-import Image from 'next/image'
-import { Separator } from '@/components/ui/separator'
-import clsx from 'clsx'
-import { cn } from '@/utils/functions'
+ */
 import {
-   UserCircle,
-   Envelope,
+   Check as CheckIcon,
+   Clock as ClockIcon,
+   HelpCircle as QuestionMarkCircleIcon,
+   X as XMarkIcon,
+   Calendar as CalendarDaysIcon,
+   CreditCard as CreditCardIcon,
+   User as UserCircleIcon,
+   Mail as Envelope,
    Phone,
    MapPin,
-   Bicycle,
+   Bike as Bicycle,
    ArrowRight,
-   ArrowUDownLeft,
-} from '@phosphor-icons/react'
-
+   CornerDownLeft as ArrowUDownLeft,
+} from 'lucide-react'
+import { CalendarDays } from 'lucide-react'
 export default function BookingResume({
    name,
    phone,

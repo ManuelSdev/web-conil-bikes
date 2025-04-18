@@ -14,7 +14,8 @@ import { dateRangeISOStringObjToString } from '@/utils/datesFns/createDateRangeS
 
 import BookingResume from './BookingResume'
 import Link from 'next/link'
-import { ArrowLeft } from '@phosphor-icons/react'
+//import { ArrowLeft } from '@phosphor-icons/react'
+import { ArrowLeft } from 'lucide-react'
 import useDialogWindow from '@/components/common/useDialogWindow'
 import { DialogWindow } from '@/components/common/DialogWindow'
 import { DialogLoader } from '@/components/common/DialogLoader'
