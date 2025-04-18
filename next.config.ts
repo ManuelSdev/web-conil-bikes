@@ -3,7 +3,7 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
    /* config options here */
-   /*
+
    async rewrites() {
       //https://nextjs.org/docs/api-reference/next.config.js/rewrites
       return [
@@ -13,7 +13,6 @@ const nextConfig: NextConfig = {
          },
       ]
    },
-   */
 }
 
 export default nextConfig
