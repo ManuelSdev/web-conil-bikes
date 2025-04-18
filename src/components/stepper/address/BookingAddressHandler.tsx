@@ -13,7 +13,12 @@ import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import Link from 'next/link'
 
-import { ArrowArcRight, ArrowLeft, ArrowRight } from '@phosphor-icons/react'
+//import { ArrowArcRight, ArrowLeft, ArrowRight } from '@phosphor-icons/react'
+import {
+   ArrowRight,
+   ArrowLeft,
+   CornerRightUp as ArrowArcRight,
+} from 'lucide-react'
 import { BookingAddressForm } from './BookingAddressForm'
 import StepControls from '@/components/stepper/StepControls'
 import useCheckDatedStepper from '@/hooks/useCheckDatedStepper'

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { BIKE_RANGES_MAP, BIKE_TYPES_MAP } from '@/utils/appValues'
+import { BIKE_RANGES_MAP, BIKE_TYPES_MAP } from '@/utils/app/appValues'
 import React from 'react'
 
 import { add, format } from 'date-fns'
