@@ -17,6 +17,7 @@ const eslintConfig = [
          '@typescript-eslint/no-unused-vars': 'off',
          '@typescript-eslint/ban-ts-comment': 'off',
          'react-hooks/exhaustive-deps': 'off',
+         '@typescript-eslint/no-unused-expressions': 'off',
       },
    },
    /*
