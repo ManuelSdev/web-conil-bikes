@@ -14,7 +14,7 @@ export default function GoogleAuthCheckPageHandler() {
       doGetRedirectResult()
    }, [])
    const { authUser, loading: loadingAuthState } = useOnAuthStateChange()
-   console.log('GoogleAuthCheckPageHandler authUser->', authUser)
+
    const handleSignOut = async () => {
       try {
          await signOut(auth)

@@ -2,6 +2,8 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import SigInFormPageHandler from './SigInFormPageHandler'
+import GoogleAuthCheckPage from '../checking/page'
+import GoogleAuthCheckPageHandler from '../GoogleAuthCheckPageHandler'
 
 export default async function UserSignInPage({ searchParams }) {
    /**
@@ -11,6 +13,8 @@ export default async function UserSignInPage({ searchParams }) {
    const cookieStore = await cookies()
 
    const isSignInWithRedirect = cookieStore.has('signInWithRedirect')
+
+   // if (isSignInWithRedirect) return <GoogleAuthCheckPageHandler />
    if (isSignInWithRedirect) {
       return redirect('/auth/checking')
    }

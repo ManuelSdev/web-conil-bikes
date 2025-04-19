@@ -25,6 +25,7 @@ import {
 import useOnAuthStateChange from './useOnAuthStateChange'
 //import { th } from 'date-fns/locale'
 import { useLazyGetUserQuery } from '@/lib/redux/apiSlices/userApi'
+import { th } from 'date-fns/locale'
 
 const provider = new GoogleAuthProvider()
 
@@ -36,49 +37,36 @@ export default function useFirebaseAuth() {
    //const auth = getAuth(app)
 
    const [isLoading, setLoading] = useState(false)
-
    const router = useRouter()
-
    const [createCookieTrigger] = useLazyCreateCookieQuery()
-
    const [deleteCookieTrigger] = useLazyDeleteCookieQuery()
    const [getUserTrigger] = useLazyGetUserQuery()
-
-   const [createSessionCookie, { loading: loadingCreateSession }] =
+   const [createSessionCookieTrigger, { loading: loadingCreateSession }] =
       useCreateSessionCookieMutation()
 
-   // console.log('isSuccess -> ', isSuccess)
-   // console.log('data -> ', data)
-   // const datas = '==================================='
    const doCreateSessionCookie = async ({ accessToken, isAdmin = false }) => {
-      //   console.log('doCreateSessionCookie SETLOADING A TRUE @@ ')
       //   setLoading(true)
-      console.log('doCreateSessionCookie -> ', accessToken)
-      //TODO: el unwrap de una mutation puede devolver un objeto res o un error
-      //Estás asumiendo que siempre devuelve un objeto res y lo destructuras
-      //pero si devuelve un error, no lo estás capturando, aunque fallará la dsctructuración
+      let resolvedUrl
       try {
-         const { success, resolvedUrl } = await createSessionCookie({
+         const res = await createSessionCookieTrigger({
             accessToken,
             isAdmin,
          }).unwrap()
-
-         //si crea la cookie session correctamente, borro (deslogo) el estado de auth
-         //en el clienteS
-         console.log('resolvedUrl -> ', resolvedUrl)
-         console.log('ANTES de signOut -> ')
-         success && signOut(auth)
-         console.log('DESPUES de signOut -> ')
-         console.log('doCreateSessionCookie signOut-> ')
-         success && router.push(resolvedUrl)
+         /**
+          * Se intenta obtener `res.data?.resolvedUrl`.
+          * Si no existe data o existe pero no existe resolvedUrl,
+          * se tomará como `undefined`, entonces se evalúa la expresión ternaria
+          */
+         resolvedUrl =
+            res.data?.resolvedUrl ?? (isAdmin ? '/dashboard/bookings' : '/') //success && signOut(auth)
+         //success && router.push(resolvedUrl)
       } catch (error) {
-         signOut(auth)
-         //setLoading(true)
-         console.log('errorrr en doCreateSessionCookie -> ', error)
+         resolvedUrl = isAdmin ? '/auth/login' : '/auth/sign-in'
          throw error
+      } finally {
+         signOut(auth)
+         router.push(resolvedUrl)
       }
-
-      //Y luego mando a la resolvedUrl que me diga el server
    }
    //Recibe customToken creado con firebase admin
    //Esto loga desde el cliente con un customToken creado en el server
@@ -264,10 +252,16 @@ export default function useFirebaseAuth() {
     *
     */
    const doSignInWithRedirect = async (ev) => {
-      const addCookie = await createCookieTrigger({
-         name: 'signInWithRedirect',
-         value: true,
-      })
+      //CLAVE GORDA DE POR QUE NO FUNCIONA signInWithRedirect
+      //https://stackoverflow.com/questions/77270210/firebase-onauthstatechanged-user-returns-null-when-on-localhost
+      /**
+       * @description Nuestro equipo de ingeniería ha estado investigando el problema y ha determinado que se debe a la partición del almacenamiento de terceros, habilitada por defecto en los navegadores web modernos. Esta partición está diseñada para evitar que los sitios web abusen del estado para el seguimiento entre sitios. Sin embargo, también afecta la capacidad del emulador para completar correctamente el flujo de autenticación de redirección.
+       * Para solucionar este comportamiento en Chrome, puedes deshabilitar la partición de almacenamiento de terceros yendo a la siguiente configuración:
+       * chrome://flags/#third-party-storage-partitioning
+       * Para Firefox, puedes corregir el comportamiento de la partición de cookies modificando la siguiente configuración:
+       * about:config > network.cookie.cookieBehavior
+       * Cambie el valor de esta configuración de 5 a 4.
+       */
       //CLAVE evitar bucles con onAuthStateChanged
       //https://firebase.google.com/docs/auth/web/manage-users?hl=es-419
       //uso opción 3
@@ -275,6 +269,10 @@ export default function useFirebaseAuth() {
       //Solución proxy inverso en next: rewrite en next.config.js
       //https://stackoverflow.com/questions/75349917/confirmation-of-why-cross-origin-problems-occur-when-using-signinwithredirect-ar
       //https://community.fly.io/t/reverse-proxy-to-firebase-authentication-for-simple-nextjs-app/12013/2
+      const addCookie = await createCookieTrigger({
+         name: 'signInWithRedirect',
+         value: true,
+      })
       try {
          await signInWithRedirect(auth, provider)
       } catch (error) {
@@ -303,23 +301,16 @@ export default function useFirebaseAuth() {
     * que a su vez devuelve un userCredential que contiene el accessToken propio de firebase.
     * Una vez obtenido el accessToken propio de firebase, se puede crear la cookie de sesión igual
     * que cuando te logas con email y password.
-    *
     */
-   //Cuando terminas en la página de login propia de google y vuelves a tu página,
-   // recuperas el token OAuth de g
+
    const doGetRedirectResult = async () => {
       try {
          const deleteCookie = await deleteCookieTrigger('signInWithRedirect')
-         console.log('doGetRedirectResult auth -> ', auth)
          const result = await getRedirectResult(auth)
-         console.log('result -> ', result)
+
          if (!result) {
-            return console.log(
-               'CUSTOM RETURN doGetRedirectResult: No hay result'
-            )
+            throw new Error('No RedirectResult')
          }
-         //   if (!result) throw new Error('CUSTOM ERROR: No hay result')
-         // This gives you a Google Access Token. You can use it to access Google APIs.
          const googleCredential =
             GoogleAuthProvider.credentialFromResult(result)
          const fireCredential = await signInWithCredential(
@@ -330,22 +321,13 @@ export default function useFirebaseAuth() {
          const {
             user: { accessToken, emailVerified },
          } = fireCredential
-         await doCreateSessionCookie(accessToken)
-         /*
-         const { idToken, accessToken } = googleCredential
-         console.log('idToken directo en getRedirectResult -> ', idToken)
-         console.log('accessToken directo en getRedirectResult ->', accessToken)
-          await doCreateSessionCookie(idToken)
-         const additionalUserInfo = getAdditionalUserInfo(result)
-         */
 
-         //console.log('additionalUserInfo -> ', additionalUserInfo)
+         await doCreateSessionCookie({ accessToken })
+         // const additionalUserInfo = getAdditionalUserInfo(result)
       } catch (error) {
-         // Handle Errors here.
-         console.log('error en getRedirectResult -> ', error)
+         console.error(error)
+         router.push('/auth/sign-in')
          /*
-         const errorCode = error.code
-         const errorMessage = error.message
          // The email of the user's account used.
          const email = error.customData.email
          // The AuthCredential type that was used.

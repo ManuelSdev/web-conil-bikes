@@ -1,47 +1,69 @@
 // @ts-nocheck
 import { app } from '@/lib/firebase/admin/firebaseAdmin'
-
 import { getAuth } from 'firebase-admin/auth'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { NextResponse } from 'next/server'
+import { getErrorResponseObj } from '../../utils'
 
 export async function POST(req) {
-   //   const body = await req.json()
-   const { result, status } = await createSessionCookie(req)
-   //console.log('result -> ', result, 'status -> ', status)
-   return Response.json(result, status)
-}
-
-async function createSessionCookie(req) {
    app()
    const body = await req.json()
+   const headersList = await headers()
+   const cookieStore = await cookies()
    const { isAdmin } = body
-   //console.log('isAdmin -> ', isAdmin)
-   const authHeader = req.headers.get('authorization')
-   const accessToken = getToken(authHeader)
-   ////console.log('accessToken -> ', accessToken)
-   // const isAdmin = await verifyCustomClaimsAdmin(accessToken)
-   //console.log('uno -> ')
-   const res = await setCookies({ isAdmin, accessToken })
-   console.log('################ res en createSessionCookie -> ', res)
-   if (res.result.success) {
-      const resolvedUrl = await getRedirectUrl({ isAdmin, req })
-      console.log(
-         '################ resolvedUrl en createSessionCookie -> ',
-         resolvedUrl
-      )
-      res.result.resolvedUrl = resolvedUrl
-      return res
-   } else return res
+
+   try {
+      const authHeader = getHeader(headersList)
+      const accessToken = getToken(authHeader)
+      await setCookies({ isAdmin, accessToken })
+      const resolvedUrl = cookieStore.get('resolvedUrl')
+      // Construimos el objeto de respuesta de forma condicional.
+      const responseBody = {
+         success: true,
+         message: 'Cookie de sesión creada correctamente',
+      }
+      if (resolvedUrl) responseBody.data = { resolvedUrl }
+      return NextResponse.json(responseBody, { status: 200 })
+   } catch (error) {
+      const { success, message, code, status } = getErrorResponseObj(error)
+      return NextResponse.json({ success, message, code }, { status })
+   }
 }
+
 /******************************************* ****************************************/
+function getHeader(headersList) {
+   if (headersList.has('authorization')) return headersList.get('authorization')
+   else
+      throw new Error(
+         JSON.stringify(
+            {
+               success: false,
+               message: 'No se encontró el encabezado de autorización',
+               code: 'MISSING_AUTH_HEADER',
+               status: 401,
+               type: 'internal',
+            },
+            null, // replacer, no lo necesitamos
+            2 // nivel de indentación (2 espacios)
+         )
+      )
+}
 
 function getToken(authHeader) {
-   if (authHeader.startsWith('Bearer ')) {
+   if (authHeader.startsWith('Bearer '))
       return authHeader.substring(7, authHeader.length)
-   } else {
-      //console.log('ERROR ON GET-TOKEN')
-   }
+   else
+      throw new Error(
+         JSON.stringify({
+            success: false,
+            message: 'Invalid authorization header format',
+            code: 'INVALID_AUTH_HEADER',
+            status: 401,
+            type: 'internal',
+            //path: path.join(__dirname, 'createSessionCookie', 'route.ts'),
+         })
+      )
 }
 
 async function verifyCustomClaimsAdmin(accessToken) {
@@ -51,51 +73,39 @@ async function verifyCustomClaimsAdmin(accessToken) {
 }
 
 async function setCookies({ isAdmin, accessToken }) {
-   ////console.log('accessToken -> ', accessToken)
    const expiresIn = 60 * 60 * 24 * 5 * 1000
+   const cookieStore = await cookies()
+
    try {
       const sessionCookie = await getAuth().createSessionCookie(accessToken, {
          expiresIn,
       })
-      //console.log('sessionCookie -> ', sessionCookie)
       const cookieName = isAdmin ? 'adminSession' : 'userSession'
       const cookieOptions = { maxAge: expiresIn, httpOnly: true, secure: true }
-      cookies().set(cookieName, sessionCookie, cookieOptions)
-      return { result: { success: true }, status: { status: 200 } }
-   } catch (err) {
-      //console.log('ERROR createSessionCookie  ', err)
-      // res.status(401).send('UNAUTHORIZED REQUEST!')
-      return {
-         result: { success: false, message: 'UNAUTHORIZED REQUEST!' },
-         status: { status: 401 },
-      }
+      cookieStore.set(cookieName, sessionCookie, cookieOptions)
+   } catch (error) {
+      throw new Error(
+         JSON.stringify({
+            success: false,
+            message: 'Error al crear la cookie de sesión',
+            code: 'UNAUTHORIZED REQUEST',
+            status: 401,
+            type: 'external',
+            source: 'firebase-admin/auth',
+            rawError: error,
+            //path: path.join(__dirname, 'createSessionCookie', 'route.ts'),
+         })
+      )
    }
 }
 
-async function getRedirectUrl({ isAdmin, req }) {
-   if (cookies().has('resolvedUrl')) {
-      const resolvedUrl = cookies().get('resolvedUrl')
-      cookies().delete('resolvedUrl')
-      console.log(
-         '**************** BORRADA COOKIE DE REDIRECCIÓN en api/aut/createSessionCookie/route.js getRedirectUrl'
-      )
-      //console.log('resolvedUrl -> ', resolvedUrl)
-      //borra la cookie
-      // res.setHeader('Set-Cookie', `resolvedUrl=0; Max-Age=0`)
+async function getRedirectUrl(isAdmin) {
+   const cookieStore = await cookies()
+   if (cookieStore.has('resolvedUrl')) {
+      const resolvedUrl = cookieStore.get('resolvedUrl')
+      cookieStore.delete('resolvedUrl')
       return resolvedUrl.value
-   } else return '/'
-   //console.log('***************** isAdmin -> ', isAdmin)
-   ////console.log('***************** req -> ', req.cookies.has('resolvedUrl'))
+   } else return '/auth/sign-in'
+   //TODO: Cambiar la ruta de redirección según el rol del usuario
    if (isAdmin) return '/dashboard/bookings'
-   else if (cookies().has('resolvedUrl')) {
-      const resolvedUrl = cookies().get('resolvedUrl')
-      cookies().delete('resolvedUrl')
-      console.log(
-         '**************** BORRADA COOKIE DE REDIRECCIÓN en api/aut/createSessionCookie/route.js getRedirectUrl'
-      )
-      //console.log('resolvedUrl -> ', resolvedUrl)
-      //borra la cookie
-      // res.setHeader('Set-Cookie', `resolvedUrl=0; Max-Age=0`)
-      return resolvedUrl.value
-   } else return '/'
 }

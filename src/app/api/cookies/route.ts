@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { cookies } from 'next/headers'
-
+/**
+ * Este endpoint se utiliza para crear cookies en el cliente desde el servidor
+ */
 export async function GET(req) {
    const searchParams = req.nextUrl.searchParams
    console.log('searchParams????????????????????????', searchParams)

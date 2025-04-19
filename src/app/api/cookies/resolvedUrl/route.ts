@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+
 //https://stackoverflow.com/questions/76356867/how-to-set-cookie-in-nextjs-13-4-2-in-api-route
 export async function GET(req) {
    const expiresIn = 60 * 60 * 24 * 5 * 1000 //5 dias
