@@ -22,7 +22,7 @@ export async function POST(req) {
          success: true,
          message: 'Cookie de sesión creada correctamente',
       }
-      if (resolvedUrl) responseBody.data = { resolvedUrl }
+      if (resolvedUrl) responseBody.data = { resolvedUrl: resolvedUrl.value }
       return NextResponse.json(responseBody, { status: 200 })
    } catch (err) {
       const { success, message, error, status } = getErrorResponseObj(err)

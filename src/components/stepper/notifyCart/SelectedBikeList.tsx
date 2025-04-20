@@ -2,10 +2,10 @@
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import React from 'react'
-import { Bike, Trash2 } from 'lucide-react'
-import { BIKE_TYPES_MAP } from '@/utils/appValues'
+import { Bike, Trash } from 'lucide-react'
+import { typeMap } from '@/utils/appValues'
 import { capitalizeFirst } from '@/utils/functions'
-import { Bicycle, Trash } from '@phosphor-icons/react'
+//import { Bicycle, Trash } from '@phosphor-icons/react'
 /*
  <Button onClick={() => setStep(2)}>Añadir bicicletas</Button>
  */
@@ -15,6 +15,7 @@ export default function SelectedBikeList({
    handleDeleteButton,
    handleAddBikeButton,
 }) {
+   const typeArray = { ...typeMap.entries() } // Convertir typeMap a un array antes de iterar
    return (
       <div className="">
          <ul role="list" className="divide-y divide-gray-100">
@@ -29,7 +30,7 @@ export default function SelectedBikeList({
                         //  src={person.imageUrl}
                         alt=""
                      >
-                        <Bicycle className="h-9 w-9" />
+                        <Bike className="h-9 w-9" />
                      </div>
                      <div className="min-w-0 flex-auto">
                         <p className="text-sm leading-6 font-semibold text-gray-900">
@@ -37,7 +38,7 @@ export default function SelectedBikeList({
                         </p>
                         <p className="truncate text-xs leading-5 text-gray-500">
                            {`${capitalizeFirst(
-                              BIKE_TYPES_MAP[bike.modelType]
+                              typeMap.get(bike.modelType)
                            )}, talla ${bike.bikeSize.toUpperCase()}`}
                         </p>
                      </div>

@@ -68,8 +68,8 @@ export default async function BikesStepPage({ params }) {
     */
    const { segmentList } = await getAppBikeSegments()
 
-   console.log('##### userAuth ', userAuth)
-   console.log('params ', params)
+   //console.log('##### userAuth ', userAuth)
+   //console.log('params ', params)
    return (
       <StepShell
          title={'Bicicletas'}
@@ -88,7 +88,7 @@ export default async function BikesStepPage({ params }) {
             loadedAvailableBikes={loadedPreviusStateData?.availableBikes}
             isLogged={isLogged}
          />
-         {/*<NotifyCart page={'bikes'} />*/}
+         <NotifyCart page={'bikes'} />
          <Test />
       </StepShell>
    )

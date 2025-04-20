@@ -2,8 +2,18 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+   //revisa
+   images: {
+      domains: [
+         'www.sbbikestogo.com',
+         //  'www.assets.specialized.com',
+         'assets.specialized.com',
+         'trek.scene7.com',
+      ],
+   },
    /* config options here */
    /*
+   Esto debe estar habilitado en produccion
    async rewrites() {
       //https://nextjs.org/docs/api-reference/next.config.js/rewrites
       return [

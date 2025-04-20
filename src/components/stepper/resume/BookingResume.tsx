@@ -31,6 +31,7 @@ import {
 } from '@heroicons/react/20/solid'
  */
 import {
+   CircleUserRound as UserCircle,
    Check as CheckIcon,
    Clock as ClockIcon,
    HelpCircle as QuestionMarkCircleIcon,

@@ -50,7 +50,7 @@ export default function BookingAddressHandler({
          ...bookingManagement,
       },
    })
-
+   const { address, delivery, pickup } = form.watch()
    useEffect(() => {
       //console.log('useEffect bookingManagement ->', bookingManagement)
       //  form.setValue('address', bookingManagement.address)
@@ -58,7 +58,7 @@ export default function BookingAddressHandler({
       //  form.setValue('pickup', bookingManagement.pickup)
       return () => {
          //Si pongo esto en el cuerpo del componente no pilla los valores....?¿
-         const { address, delivery, pickup } = form.getValues()
+
          dispatch(bookingManagementSelected({ address, delivery, pickup }))
       }
    }, [])
@@ -71,7 +71,8 @@ export default function BookingAddressHandler({
       : '/booking/bikes'
 
    const renderNextButton = (renderClassName) => {
-      const { address } = form.getValues()
+      // const { address } = form.getValues()
+      console.log('renderNextButton address', address)
       const isDisabled = !address
 
       return isDisabled ? (
