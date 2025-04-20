@@ -1,24 +1,26 @@
 // @ts-nocheck
 import { verifySessionCookie } from '@/lib/firebase/admin/verifySessionCookie'
+import { el } from 'date-fns/locale'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextResponse } from 'next/server'
 
+import chalk from 'chalk'
 export async function GET(req) {
-   ////console.log('############################################################')
    const expiresIn = 60 * 60 * 24 * 5 * 1000
    const cookieOptions = {
       maxAge: expiresIn,
       httpOnly: true,
       secure: true,
    }
+   console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+   console.warn(chalk.yellow('sssssssssss'))
 
    const searchParams = req.nextUrl.searchParams
-   const role = searchParams.get('role')
-   // console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ role ->', role)
-   const cookieStore = cookies()
+   const roleParam = searchParams.get('role')
+   const cookieStore = await cookies()
    const sessionCookie =
-      role === 'admin'
+      roleParam === 'admin'
          ? cookieStore.get('adminSession')
          : cookieStore.get('userSession')
    //console.log('HANDLER:verifySessionCookie sessionCookie ->', sessionCookie)
@@ -26,44 +28,52 @@ export async function GET(req) {
    //verificado su email. Gestiona el caso de no verificación de email en el middleware
    try {
       const decodeClaims = await verifySessionCookie(sessionCookie.value)
-      // //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-      //console.log('##### decodeClaims ->', decodeClaims)
       //TODO: parche para pruebas , revisa el uso de roles
-      const adminEmail = process.env.ADMIN_EMAIL
-      const { appRole, email, admin } = decodeClaims
-      //TODO: no tienes este custom claim en el token, por lo que no puedes verificar si es admin
-      //const isAdmin = appRole === 'admin' || appRole === 'manager'
-      const isAdmin = admin
+      //TODO los user actuales tienen appRole, el admin test no, usa appRole en adelante al crear usuarios
+      const { appRole, email_verified: verified } = decodeClaims
+
+      //TODO: ajusta esto cuando tengas appRole admin y manager
+      //De momento, pongo !appRole porque el email que uso para testear no tiene appRole
+      const isAppAdminRole = appRole !== 'user' || !appRole
 
       ////console.log('HANDLER: verifySessionCookie ADMIN ->', admin)
-      if (role === 'admin') {
-         if (isAdmin || adminEmail === email)
-            return Response.json({ verified: true })
-         if (!isAdmin) {
-            const error = {
-               code: 'custom',
-               message: 'No admin custom claim',
-            }
-            return Response.json({ verified: false, error })
-         }
-      }
-      if (role === 'user') {
-         if (appRole === 'user') return Response.json({ verified: true })
-      }
-      return Response.json({ verified: true })
-   } catch (error) {
-      console.log('HANDLER: verifySessionCookie error ->', error)
-      console.log('role ->', role)
-      if (role !== 'admin') {
-         cookies().set('name', 'lee')
-         //console.log('####################')
-         //  return redirect('http://localhost:3000/auth/sign-in')
-      }
+      if (roleParam === 'admin' && isAppAdminRole)
+         return NextResponse.json({ success: true }, { status: 200 })
 
-      //  return redirect('/auth/login')
-      //return redirectToUnauthorized()
-      return Response.json({ verified: false, error })
+      if (roleParam === 'user' && appRole === 'user')
+         if (verified)
+            return NextResponse.json({ success: true }, { status: 200 })
+         else
+            return NextResponse.json(
+               {
+                  success: false,
+                  message: 'El usuario no ha verificado su email',
+                  error: {
+                     details: 'Unverified email',
+                     code: 'UNVERIFIED_EMAIL',
+                  },
+               },
+               { status: 403 }
+            )
+      return NextResponse.json(
+         {
+            success: false,
+            message: 'El usuario no tiene permisos para esta acción',
+            error: {
+               details: 'Custom claim check failed',
+               code: 'ACCESS_DENIED',
+            },
+         },
+         { status: 403 }
+      )
+   } catch (error) {
+      return NextResponse.json(
+         {
+            success: false,
+            message: 'Unauthorized',
+            error,
+         },
+         { status: 401 }
+      )
    }
 }
-
-//          \$[\d]+|\$\[([\d\w]+)\]

@@ -1,10 +1,10 @@
 // @ts-nocheck
+import { getErrorResponseObj } from '@/app/api/utils'
 import { app } from '@/lib/firebase/admin/firebaseAdmin'
 import { getAuth } from 'firebase-admin/auth'
 import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextResponse } from 'next/server'
-import { getErrorResponseObj } from '../../utils'
 
 export async function POST(req) {
    app()
@@ -12,7 +12,6 @@ export async function POST(req) {
    const headersList = await headers()
    const cookieStore = await cookies()
    const { isAdmin } = body
-
    try {
       const authHeader = getHeader(headersList)
       const accessToken = getToken(authHeader)
@@ -25,9 +24,9 @@ export async function POST(req) {
       }
       if (resolvedUrl) responseBody.data = { resolvedUrl }
       return NextResponse.json(responseBody, { status: 200 })
-   } catch (error) {
-      const { success, message, code, status } = getErrorResponseObj(error)
-      return NextResponse.json({ success, message, code }, { status })
+   } catch (err) {
+      const { success, message, error, status } = getErrorResponseObj(err)
+      return NextResponse.json({ success, message }, { status })
    }
 }
 
@@ -39,10 +38,13 @@ function getHeader(headersList) {
          JSON.stringify(
             {
                success: false,
-               message: 'No se encontró el encabezado de autorización',
-               code: 'MISSING_AUTH_HEADER',
+               message: 'Unauthorized',
                status: 401,
                type: 'internal',
+               error: {
+                  details: 'Authorization header not found',
+                  code: 'MISSING_AUTH_HEADER',
+               },
             },
             null, // replacer, no lo necesitamos
             2 // nivel de indentación (2 espacios)
@@ -57,10 +59,13 @@ function getToken(authHeader) {
       throw new Error(
          JSON.stringify({
             success: false,
-            message: 'Invalid authorization header format',
-            code: 'INVALID_AUTH_HEADER',
+            message: 'Unauthorized',
             status: 401,
             type: 'internal',
+            error: {
+               details: 'Authorization header must start with "Bearer"',
+               code: 'INVALID_AUTH_HEADER',
+            },
             //path: path.join(__dirname, 'createSessionCookie', 'route.ts'),
          })
       )
@@ -87,11 +92,14 @@ async function setCookies({ isAdmin, accessToken }) {
       throw new Error(
          JSON.stringify({
             success: false,
-            message: 'Error al crear la cookie de sesión',
-            code: 'UNAUTHORIZED REQUEST',
+            message: 'Unauthorized',
             status: 401,
             type: 'external',
             source: 'firebase-admin/auth',
+            error: {
+               details: 'Error creating session cookie',
+               code: 'UNAUTHORIZED REQUEST',
+            },
             rawError: error,
             //path: path.join(__dirname, 'createSessionCookie', 'route.ts'),
          })

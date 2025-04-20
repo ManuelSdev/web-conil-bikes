@@ -77,7 +77,7 @@ const themeConfig: ThemeConfig = {
    },
 }
 
-console.log(themeConfig.LIGHT) // { background: '#ffffff', textColor: '#000000' }
+//console.log(themeConfig.LIGHT) // { background: '#ffffff', textColor: '#000000' }
 
 // Ejemplo con Record
 
@@ -100,7 +100,7 @@ const paletteConfig: Record<Palette, PaletteSettings> = {
    },
 }
 
-console.log(paletteConfig.LIGHT) // { background: '#ffffff', textColor: '#000000' }
+//console.log(paletteConfig.LIGHT) // { background: '#ffffff', textColor: '#000000' }
 
 // Diferencias y beneficios de cada enfoque
 // - Firma de Índices: Permite mayor flexibilidad si no conoces todas las claves de antemano o si las claves pueden ser dinámicas.

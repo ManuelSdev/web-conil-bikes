@@ -3,6 +3,7 @@
  * en caso de que el usuario no esté logueado
  */
 //@ts-nocheck
+import chalk from 'chalk'
 
 export async function authMiddleware({
    isAdmin,
@@ -10,6 +11,7 @@ export async function authMiddleware({
    NextResponse,
    resolvedUrl,
 }) {
+   chalk.level = 3
    console.log('isAdmin en authMiddleware -> ', isAdmin)
    // console.log('authMiddleware')
    //console.log('request -> ', request)
@@ -18,7 +20,7 @@ export async function authMiddleware({
    //TODO: usar verifySessionCookie o esto no vale pa na
    console.log('request.url en authMiddleware -> ', request.url)
    const urlToRedirect = isAdmin
-      ? new URL('/auth', request.url)
+      ? new URL('/auth/login', request.url)
       : new URL('/auth/sign-in', request.url)
    console.log('urlToRedirect -> ', urlToRedirect)
    const sessionCookie = isAdmin
@@ -30,12 +32,12 @@ export async function authMiddleware({
         : null
 
    if (!sessionCookie) {
-      console.log('##### SIN sessionCookie')
+      console.warn(chalk.yellow('No hay cookie de sesión'))
       return redirectToLogin(NextResponse, resolvedUrl, urlToRedirect)
    }
    //console.log('@@ auth reques.url authMiddleware -> ', request.url)
 
-   const res = await fetch(
+   const verifyCookieRawRes = await fetch(
       process.env.URL +
          `/api/auth/firebaseAdmin/verifySessionCookie?role=${
             isAdmin ? 'admin' : 'user'
@@ -48,23 +50,19 @@ export async function authMiddleware({
          },
       }
    )
-   const authState = await res.json()
-   console.log('authState en authMiddleware -> ', authState)
-   //  console.log('authState en authMiddleware', authState)
-   //TODO: termina cuando el mail no está verificado
-   const { verified, error } = authState
-   console.log('error en authMiddleware ->', error)
-   //TODO: en principio, la verificación de email se tiene en cuenta solo si no es admin
-   if (!verified) {
-      console.log('##### SIN verified')
-      //   console.log('urlToRedirect -> ', urlToRedirect)
+   const verifyCookieRes = await verifyCookieRawRes.json()
+
+   const { success, message, error } = verifyCookieRes
+
+   if (!success) {
+      console.warn(chalk.yellow('No hay cookie de sesión'))
       return redirectToLogin(NextResponse, resolvedUrl, urlToRedirect)
    }
    //request.cookies.set('show-banner', 'false')
    //https://nextjs.org/docs/app/building-your-application/routing/middleware#producing-a-response
 
    //return NextResponse.next()
-   console.log('******************* retorna null')
+
    return null
    const response = NextResponse.next()
    response.cookies.delete('vercel', 'fast')
@@ -84,13 +82,11 @@ function redirectToLogin(NextResponse, resolvedUrlCookieValue, urlToRedirect) {
     * a la que llamamos resolvedUrl, que seteamos en el header
     *
     */
-   console.log('########## redirectToLogin -> ', resolvedUrlCookieValue)
    const expiresIn = 60 * 60 * 24 * 5 * 1000
    const cookieOptions = { maxAge: expiresIn, httpOnly: true, secure: true }
    // Setting cookies on the response using the `ResponseCookies` API
    const response = NextResponse.redirect(urlToRedirect, { status: 302 })
    response.cookies.set('resolvedUrl', resolvedUrlCookieValue, cookieOptions)
-   //console.log('## redirectToLogin -> ', resolvedUrlCookieValue)
    return response
 }
 /*

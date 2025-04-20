@@ -9,7 +9,7 @@ export const authApi = baseApi.injectEndpoints({
        */
       createSessionCookie: builder.mutation({
          query: ({ accessToken, isAdmin }) => ({
-            url: 'auth/createSessionCookie',
+            url: 'auth/firebaseAdmin/createSessionCookie',
             method: 'POST',
             headers: {
                Authorization: `Bearer ${accessToken}`,

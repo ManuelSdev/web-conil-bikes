@@ -17,8 +17,7 @@ import datedStepperMiddleware from './datedStepperMiddleware'
  *  Y, en este archivo, hago un fetch a ese route handler
  */
 export async function middleware(request) {
-   // console.log('  middleware ')
-   const headersList = headers()
+   const headersList = await headers()
 
    //console.log('request.url -> ', request.nextUrl)
    const path = (path) => request.nextUrl.pathname.startsWith(path)
@@ -50,21 +49,19 @@ export async function middleware(request) {
     *
     */
    if (pathName.startsWith('/dashboard')) {
-      console.log('URL -------------> ', process.env.URL)
-      const refererHeader = headersList.get('referer')
-      const nextUrlHeader = headersList.get('next-url')
-      //console.log('refererHeader -> ', refererHeader)
-      //console.log('nextUrlHeader -> ', nextUrlHeader)
+      //console.log('URL -------------> ', process.env.URL)
+      //const refererHeader = headersList.get('referer')
+      //const nextUrlHeader = headersList.get('next-url')
 
-      const response = await authMiddleware({
+      const authMiddlewareResponse = await authMiddleware({
          isAdmin: true,
          request,
          NextResponse,
 
          resolvedUrl,
       })
-      console.log('request next url en middleware', request.nextUrl)
-      if (response) return response
+      //console.log('request next url en middleware', request.nextUrl)
+      if (authMiddlewareResponse) return authMiddlewareResponse
       return NextResponse.next()
 
       if (pathName.includes('/new/bikes' || '/new/address' || '/new/resume')) {

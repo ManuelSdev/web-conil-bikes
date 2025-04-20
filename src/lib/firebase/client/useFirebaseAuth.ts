@@ -23,9 +23,7 @@ import {
 } from '@/lib/redux/apiSlices/cookieApi'
 
 import useOnAuthStateChange from './useOnAuthStateChange'
-//import { th } from 'date-fns/locale'
 import { useLazyGetUserQuery } from '@/lib/redux/apiSlices/userApi'
-import { th } from 'date-fns/locale'
 
 const provider = new GoogleAuthProvider()
 
@@ -45,6 +43,8 @@ export default function useFirebaseAuth() {
       useCreateSessionCookieMutation()
 
    const doCreateSessionCookie = async ({ accessToken, isAdmin = false }) => {
+      console.log('isAdmin -> ', isAdmin)
+      console.error(isAdmin)
       //   setLoading(true)
       let resolvedUrl
       try {
@@ -59,6 +59,7 @@ export default function useFirebaseAuth() {
           */
          resolvedUrl =
             res.data?.resolvedUrl ?? (isAdmin ? '/dashboard/bookings' : '/') //success && signOut(auth)
+         console.log('resolvedUrl -> ', resolvedUrl)
          //success && router.push(resolvedUrl)
       } catch (error) {
          resolvedUrl = isAdmin ? '/auth/login' : '/auth/sign-in'
@@ -122,7 +123,23 @@ export default function useFirebaseAuth() {
       }
    }
 
-   const doAdminSignInWithEmailAndPassword = async ({
+   /**
+    * Como voy a gestionar la autenticación con cookies de sesión desde el server,
+    * no necesito mantener el estado de sesión en el cliente
+    * Segun esto: https://firebase.google.com/docs/auth/admin/manage-cookies?hl=es-419#sign_in
+    * puedes anular el estado de sesión en el cliente desde el principio, anulando la persistencia
+    *    -firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
+    * o puedes hacerlo al final, con un signOut directo en el lado del cliente
+    *    - return firebase.auth().signOut();
+    * En este caso, usaré el signOut dentro de doCreateSessionCookie, ya que voy a usar
+    * este último método para gestionar también la session cookie cuando uso
+    * el login con google
+    * CLAVE: no quito la persistencia inicialmente porque, si bien doSignInWithEmailAndPassword
+    * puede recoger directamente el accessToken del user, cuando uso el login con google necesito
+    * sacar ese accessToken del usuario, por eso necesito que, por un espacio de tiempo, el estado de auth
+    * exista en el cliente para obtener el accessToken con desde onAuthStateChanged
+    */
+   const doSignInWithEmailAndPassword = async ({
       isAdmin,
       email,
       password,
@@ -135,59 +152,51 @@ export default function useFirebaseAuth() {
             email,
             password
          )
+         /**
+          * Si es adminPage, se compreueba que el rol del usuario
+          * sea admin o manager para poder logar
+          */
+         if (isAdmin) {
+            const idTokenResult = await auth.currentUser.getIdTokenResult()
+            const {
+               claims: { appRole },
+            } = idTokenResult
+            //Solo crea la cookie si appRole es admin o manager
+            if (appRole === 'user') {
+               const error = { code: 'custom/unauthorized' }
+               throw error
+            }
+         }
 
-         const idTokenResult = await auth.currentUser.getIdTokenResult()
-
-         const {
-            claims: { appRole },
-         } = idTokenResult
-         //Solo crea la cookie si appRole es admin o manager
-         if (appRole === 'user') {
-            const error = { code: 'custom/unauthorized' }
+         const { user } = userCredential
+         const { accessToken, emailVerified } = user
+         /**
+          * Si no es adminPage, a users se les exige
+          * estar verificados para poder logar
+          */
+         if (!isAdmin && !emailVerified) {
+            signOut(auth)
+            const error = { code: 'custom/unverified' }
             throw error
          }
-         const { user } = userCredential
-         const { accessToken } = user
 
-         await doCreateSessionCookie({ accessToken, isAdmin: true })
-
-         //return { emailVerified }
-      } catch (err) {
-         //    signOut(auth)
-         //todo mira que esto retorne ok por si dejas mensaje en ui
-         // console.log('doSignInWithEmailAndPassword ERROR -> ', err)
-         const { code } = err
-         //  const error = errorHandlerSignMailAndPass(code)
-         //  setLoading(false)
-         throw err
-         // return { error }
+         await doCreateSessionCookie({ accessToken, isAdmin })
+      } catch (error) {
+         console.error(error)
+         const { code } = error
+         throw error
       } finally {
          setLoading(false)
       }
    }
 
-   const doSignInWithEmailAndPassword = async ({
+   const doSignInWithEmailAndPassword_ = async ({
       isAdmin,
       email,
       password,
    }) => {
       //  console.log('doSignInWithEmailAndPassword    ', email, password)
-      /**
-       * Como voy a gestionar la autenticación con cookies de sesión desde el server,
-       * no necesito mantener el estado de sesión en el cliente
-       * Segun esto: https://firebase.google.com/docs/auth/admin/manage-cookies?hl=es-419#sign_in
-       * puedes anular el estado de sesión en el cliente desde el principio, anulando la persistencia
-       *    -firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
-       * o puedes hacerlo al final, con un signOut directo en el lado del cliente
-       *    - return firebase.auth().signOut();
-       * En este caso, usaré el signOut dentro de doCreateSessionCookie, ya que voy a usar
-       * este último método para gestionar también la session cookie cuando uso
-       * el login con google
-       * CLAVE: no quito la persistencia inicialmente porque, si bien doSignInWithEmailAndPassword
-       * puede recoger directamente el accessToken del user, cuando uso el login con google necesito
-       * sacar ese accessToken del usuario, por eso necesito que, por un espacio de tiempo, el estado de auth
-       * exista en el cliente para obtener el accessToken con desde onAuthStateChanged
-       */
+
       setLoading(true)
 
       try {
@@ -341,7 +350,7 @@ export default function useFirebaseAuth() {
       //  authUser,
       //loadingAuthState,
       isLoading,
-      doAdminSignInWithEmailAndPassword,
+      //doAdminSignInWithEmailAndPassword,
       doSignInWithEmailAndPassword,
       doSignInWithRedirect,
       doGetRedirectResult,

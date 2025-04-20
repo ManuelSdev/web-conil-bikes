@@ -32,20 +32,11 @@ export default function SigInFormPageHandler({ isAdmin }) {
    const router = useRouter()
 
    async function onSubmit(data, event) {
-      //console.log('data ->', data)
-      ////console.log('ev ->', event)
       event.preventDefault()
       const { email, password } = data
-      //console.log('email ->', email)
-      //console.log('password ->', password)
+
       try {
-         if (isAdmin)
-            await doAdminSignInWithEmailAndPassword({
-               isAdmin,
-               email,
-               password,
-            })
-         else await doSignInWithEmailAndPassword({ isAdmin, email, password })
+         doSignInWithEmailAndPassword({ isAdmin, email, password })
       } catch (error) {
          //handleOpen(error)
          //console.log('doSignInWithEmailAndPassword ERROR -> ', error)

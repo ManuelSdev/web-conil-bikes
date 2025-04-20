@@ -24,5 +24,5 @@ export default async function UserSignInPage({ searchParams }) {
     */
    // const { verified: isEmailVerified } = searchParams
 
-   return <SigInFormPageHandler />
+   return <SigInFormPageHandler isAdmin={false} />
 }
