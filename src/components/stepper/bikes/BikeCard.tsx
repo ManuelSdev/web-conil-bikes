@@ -37,7 +37,7 @@ export default function BikeCard({ bike, renderSelectBikeButton }) {
                </div>
 
                {/* Product details */}
-               <div className="mx-auto mt-7 max-w-2xl  sm:col-span-3 sm:row-span-2 sm:row-end-2 sm:mt-0 md:max-w-none">
+               <div className="mx-auto mt-7 max-w-2xl sm:col-span-3 sm:row-span-2 sm:row-end-2 sm:mt-0 md:max-w-none">
                   <div className="flex flex-col-reverse">
                      <div className="">
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
@@ -66,6 +66,7 @@ export default function BikeCard({ bike, renderSelectBikeButton }) {
                      >
                         Pay {product.price}
                      </button>*/}
+                     {}
                      {renderSelectBikeButton(bike)}
                   </div>
                </div>

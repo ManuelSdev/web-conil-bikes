@@ -1,15 +1,7 @@
 // @ts-nocheck
-//@ts-nocheck
-'use client'
 
-import Link from 'next/link'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
-
-import { Button } from '@/components/ui/button'
+import SpinnerLine from '@/components/common/SpinnerLine'
 import {
-   Form,
    FormControl,
    FormDescription,
    FormField,
@@ -24,9 +16,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/ui/select'
-import React, { useEffect } from 'react'
 import { sizeMap } from '@/utils/appValues'
-import SpinnerLine from '@/components/common/SpinnerLine'
 
 export default function SizeSelect({
    form,

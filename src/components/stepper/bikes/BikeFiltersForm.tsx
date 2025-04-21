@@ -1,28 +1,16 @@
 //@ts-nocheck
 'use client'
 
+import { Button } from '@/components/ui/button'
+import { Form } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2, Search } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-import { Form } from '@/components/ui/form'
+import RangeSelect from './RangeSelect'
 import SizeSelect from './SizeSelect'
-import React, { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
-import {
-   useGetAvailableBikesQueryState,
-   useGetAvailableRangesMutation,
-   useGetAvailableSizesQuery,
-   // useLazyGetAvailableRangesQuery,
-   useLazyGetAvailableTypesQuery,
-} from '@/lib/redux/apiSlices/bikeApi'
 import TypeSelect from './TypeSelect'
 
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import { urlParams } from '@/utils/app/functions'
-import RangeSelect from './RangeSelect'
-import { useDispatch, useSelector } from 'react-redux'
-import { baseApi } from '@/lib/redux/apiSlices/baseApi'
 const FormSchema = z.object({
    email: z
       .string({
@@ -35,34 +23,11 @@ export default function BikeFiltersForm({
    dateRange,
    availableSizes,
    segmentList,
-   renderShowBikesButton,
    loadedSearchKeys,
-
+   typesQuery,
+   rangesMutation,
    ...props
-   //form,
-   // setStep,
 }) {
-   const dispatch = useDispatch()
-
-   console.log('loadedSearchKeys', loadedSearchKeys)
-   const loadedSize = loadedSearchKeys?.size
-   const loadedType = loadedSearchKeys?.type
-   const loadedRange = loadedSearchKeys?.range
-
-   const [loadedKeys, setLoadedKeys] = useState({
-      loadedSize,
-      loadedType,
-      loadedRange,
-   })
-
-   const FormSchema = z.object({
-      email: z
-         .string({
-            required_error: 'Please select an email to display.',
-         })
-         .email(),
-   })
-
    const form = useForm(
       {
          defaultValues: {
@@ -71,24 +36,11 @@ export default function BikeFiltersForm({
             range: loadedSearchKeys?.range,
          },
       },
-
       { resolver: zodResolver(FormSchema) }
    )
 
-   if (false) {
-      form.setValue('size', loadedSearchKeys.size)
-      form.setValue('type', loadedSearchKeys.type)
-      form.setValue('range', loadedSearchKeys.range)
-   }
    const { size, type, range } = form.watch()
 
-   const a = useGetAvailableBikesQueryState({
-      dateRange,
-      size,
-      type,
-      range,
-      //className: 'sm:self-end',
-   })
    const [
       triggerType,
       {
@@ -98,14 +50,14 @@ export default function BikeFiltersForm({
          unsubscribe: unsubscribeTypes,
       },
       lastPromiseInfoTypes,
-   ] = useLazyGetAvailableTypesQuery()
+   ] = typesQuery
 
    const [
       triggerRange,
       { data: availableRanges, isLoading: isLoadingRange, reset: resetRanges },
-   ] = useGetAvailableRangesMutation()
+   ] = rangesMutation
 
-   /* Uso la mutation en lugar de la query
+   /* Uso la mutation en lugar de la query porque la query no tiene reset
    const [
       triggerRange,
       { data, isFetching: isLoadingRange, originalArgs },
@@ -113,10 +65,6 @@ export default function BikeFiltersForm({
    ] = useLazyGetAvailableRangesQuery()
     */
 
-   const handleClick = (ev) => {
-      setStep(1)
-      //resetBikeForm()
-   }
    const handleSizeChange = (field) => (selectedSizeValue) => {
       field.onChange(selectedSizeValue)
       form.resetField('type')
@@ -139,7 +87,6 @@ export default function BikeFiltersForm({
 
    const onSubmit = (data, event) => {
       event.preventDefault()
-      // setStep(1)
    }
 
    //Clave para resetear los select
@@ -152,7 +99,6 @@ export default function BikeFiltersForm({
             className="space-y-8"
          >
             <SizeSelect
-               loadedSize={loadedKeys.loadedSize}
                // className="sm:grow"
                className="space-y-2"
                form={form}
@@ -162,7 +108,6 @@ export default function BikeFiltersForm({
                {...props}
             />
             <TypeSelect
-               loadedType={loadedKeys.loadedType}
                // className="sm:grow"
                className="sm:min-w-[100px]"
                form={form}
@@ -172,7 +117,6 @@ export default function BikeFiltersForm({
                {...props}
             />
             <RangeSelect
-               loadedRange={loadedKeys.loadedRange}
                // className="sm:grow"
                className="sm:min-w-[165px]"
                segmentList={segmentList}
@@ -184,19 +128,39 @@ export default function BikeFiltersForm({
             />
             <div className="mx-auto max-w-xs">
                <div className="flex">
-                  {renderShowBikesButton({
-                     dateRange,
-                     size,
-                     type,
-                     range,
-                     className: 'grow',
-                  })}
+                  <ShowBikesButton
+                     size={size}
+                     type={type}
+                     range={range}
+                     {...props}
+                  />
                </div>
             </div>
          </form>
       </Form>
    )
 }
+
+function ShowBikesButton({ size, type, range, isFetchingBikes, onDispatch }) {
+   console.log('range', range)
+   return isFetchingBikes ? (
+      <Button variant="reverse" className="grow">
+         <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Cargando...
+      </Button>
+   ) : (
+      <Button
+         variant="reverse"
+         className="grow"
+         onClick={() => onDispatch({ size, type, range })}
+         disabled={!range}
+         //type="submit"
+      >
+         <Search className="mr-2 h-4 w-4" />
+         Mostrar bicicletas
+      </Button>
+   )
+}
+
 /**
  * Uso una mutation para obtener los rangos disponibles
  * y no una query porque la query no tiene reset

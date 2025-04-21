@@ -64,7 +64,7 @@ const bookingFormSlice = createSlice({
          state.dateRange = action.payload
       },
       bookingManagementSelected: (state, action) => {
-         // //console.log('bookingManagementSelected action.payload _> ', action)
+         console.log('bookingManagementSelected action.payload _> ', action)
          const { address, delivery, pickup } = action.payload
          state.address = address
          state.delivery = delivery

@@ -1,91 +1,50 @@
 // @ts-nocheck
-import DatePicker from '@/components/datepicker/DatePicker'
-import MobileBottomAppBar from '@/components/layouts/site/MobileBottomAppBar'
-import { format } from 'date-fns'
-import { is } from 'date-fns/locale'
-import Link from 'next/link'
-import React from 'react'
+'use client'
+import DatePickersHandler from './DatePickersHandler'
+//import { Link } from 'react-transition-progress/next'
 
-const FROM = 'from'
-const TO = 'to'
+import StepControls from '../StepControls'
+// CLAVE import { ArrowRight } from '@phosphor-icons/react'
+
+import { AlertDialogButton } from '@/components/common/AlertDialogButton'
+import { cn } from '@/utils/functions'
 
 export default function DateStep({
+   areBikes,
    from,
    to,
    handleSelect,
-   linkDisabled,
+   nextUrl,
    storedDateRange,
-   ...props
+   onDispatch,
 }) {
-   const today = new Date()
-   const nextDay = new Date(today)
-   nextDay.setDate(today.getDate() + 1)
-
-   const nextYear = new Date(
-      today.getFullYear() + 1,
-      today.getMonth(),
-      today.getDate()
-   )
-   const { from: isoFrom, to: isoTo } = storedDateRange
-
-   const selectedFrom = new Date(isoFrom)
-   const selectedTo = new Date(isoTo)
-   const selectedFromNextDay = new Date(
-      selectedFrom.setDate(selectedFrom.getDate() + 1)
-   )
-   const selectedFromPrevDay = new Date(
-      selectedTo.setDate(selectedTo.getDate() - 1)
-   )
-   console.log('nextDay -> ', from)
-   //TODO: crea customDay para señañar el dia seleccionado en to y from
    return (
-      <div className="grow justify-center gap-5">
-         <div className="flex w-full justify-between gap-5 py-3 md:justify-center">
-            <DatePicker
-               //className="grow md:w-1/3 md:grow-0"
-               className={'w-[45%] grow'}
-               label="Inicio"
-               date={from}
-               handleSelect={handleSelect(FROM)}
-               disabled={[
-                  { before: nextDay },
-                  { after: to ? selectedFromPrevDay : nextYear },
-               ]}
-               {...props}
-            />
-            <DatePicker
-               // className="grow md:w-1/3  md:grow-0"
-               disabled={[
-                  { before: from ? selectedFromNextDay : today },
-                  { after: nextYear },
-               ]}
-               className={'w-[45%] grow'}
-               label="Fin"
-               date={to}
-               handleSelect={handleSelect(TO)}
-               //selected={selected}
-               {...props}
+      <div className={'mx-auto max-w-xs'}>
+         {/*<DialogLoader open={true} />*/}
+
+         <DatePickersHandler
+            isDisabled={areBikes}
+            from={from}
+            to={to}
+            handleSelect={handleSelect}
+            storedDateRange={storedDateRange}
+         />
+         <div className="mt-4 flex">
+            <AlertDialogButton
+               className={cn({ 'hidden': !areBikes }, 'grow')}
+               variant={'reverse'}
+               title={'Aviso'}
+               description={
+                  'Al modificar la fecha de reserva, las bicicletas seleccionadas para la fecha actual serán eliminadas para que pueda realizar una nueva búsqueda de bicicletas dentro de la nueva fecha seleccionada.'
+               }
+               actionText={'Modificar fecha'}
+               cancelText={'Cancelar'}
+               triggerButtonText={'Modificar fecha'}
+               handleAction={(event) => onDispatch()}
             />
          </div>
-         {/*!linkDisabled ? (
-            <Link
-               disabled
-               href="/booking/bikes"
-               className="mt-8 block w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-gray-900 hover:bg-gray-100 sm:w-auto"
-            >
-               Continuarse
-            </Link>
-         ) : (
-            <button
-               disabled
-               className="mt-8 block w-full rounded-md border border-transparent bg-red-300 px-8 py-3 text-base font-medium text-gray-900 hover:bg-gray-100 sm:w-auto"
-            >
-               {' '}
-               Continuar
-            </button>
-         )*/}
+
+         <StepControls nextUrl={nextUrl} nextIsDisabled={!from || !to} />
       </div>
    )
 }
-
-/*<MobileBottomAppBar {...props} />*/

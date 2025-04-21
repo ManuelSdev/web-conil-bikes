@@ -20,8 +20,7 @@ import {
 import StepShell from '@/components/stepper/StepShell'
 import NotifyCart from '@/components/stepper/notifyCart/NotifyCart'
 import AvailableBikeListHandler from '@/components/stepper/bikes/AvailableBikeListHandler'
-import BikesStepHandlerTest from '@/components/stepper/bikes/BikesStepHandlerTest'
-import { Test } from '@/components/stepper/bikes/Test'
+import BikesStepHandler from '@/components/stepper/bikes/BikesStepHandler'
 
 /**
  * CLAVE
@@ -76,7 +75,7 @@ export default async function BikesStepPage({ params }) {
          description="Selecciona las bicicletas que deseas añadir a tu reserva"
       >
          <Stepper step={2} page="bikes">
-            <BikesStepHandlerTest
+            <BikesStepHandler
                segmentList={segmentList}
                loadedSearchKeys={loadedSearchKeys}
                loadedData={loadedPreviusStateData}
@@ -89,7 +88,6 @@ export default async function BikesStepPage({ params }) {
             isLogged={isLogged}
          />
          <NotifyCart page={'bikes'} />
-         <Test />
       </StepShell>
    )
 }

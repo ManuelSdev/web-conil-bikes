@@ -1,17 +1,8 @@
 // @ts-nocheck
-//@ts-nocheck
-'use client'
 
-import Link from 'next/link'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
-
-import { Button } from '@/components/ui/button'
+import SpinnerLine from '@/components/common/SpinnerLine'
 import {
-   Form,
    FormControl,
-   FormDescription,
    FormField,
    FormItem,
    FormLabel,
@@ -24,17 +15,14 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/ui/select'
-import React, { use, useEffect } from 'react'
 import { rangeMap } from '@/utils/appValues'
-import { capitalizeFirst, mappedBikeRange } from '@/utils/functions'
-import SpinnerLine from '@/components/common/SpinnerLine'
+import { capitalizeFirst } from '@/utils/functions'
 
 export default function RangeSelect({
    form,
    availableRanges,
    handleChange,
    segmentList,
-
    className,
    isLoadingRange,
 }) {

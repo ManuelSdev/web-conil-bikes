@@ -1,19 +1,13 @@
 // @ts-nocheck
 import DatePicker from '@/components/datepicker/DatePicker'
-import MobileBottomAppBar from '@/components/layouts/site/MobileBottomAppBar'
-import { format } from 'date-fns'
-import { is } from 'date-fns/locale'
-import Link from 'next/link'
-import React from 'react'
 
 const FROM = 'from'
 const TO = 'to'
 
-export default function DateStep({
+export default function DatePickersHandler({
    from,
    to,
    handleSelect,
-   linkDisabled,
    storedDateRange,
    ...props
 }) {

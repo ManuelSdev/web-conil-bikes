@@ -1,24 +1,19 @@
 // @ts-nocheck
 'use client'
-import React from 'react'
 import { Button } from '@/components/ui/button'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-   formReseted,
-   reset,
-   selectBookingData,
-} from '@/lib/redux/slices/bookingFormSlice'
-import { useLazyCreateCookieQuery } from '@/lib/redux/apiSlices/cookieApi'
 import { useCreateBookingMutation } from '@/lib/redux/apiSlices/bookingApi'
+import { useLazyCreateCookieQuery } from '@/lib/redux/apiSlices/cookieApi'
+import { selectBookingData } from '@/lib/redux/slices/bookingFormSlice'
 import { dateRangeISOStringObjToString } from '@/utils/datesFns/createDateRangeString'
+import { useDispatch, useSelector } from 'react-redux'
 
-import BookingResume from './BookingResume'
 import Link from 'next/link'
+import BookingResume from './BookingResume'
 //import { ArrowLeft } from '@phosphor-icons/react'
-import { ArrowLeft } from 'lucide-react'
-import useDialogWindow from '@/components/common/useDialogWindow'
-import { DialogWindow } from '@/components/common/DialogWindow'
 import { DialogLoader } from '@/components/common/DialogLoader'
+import { DialogWindow } from '@/components/common/DialogWindow'
+import useDialogWindow from '@/components/common/useDialogWindow'
+import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function BookingResumeHandler({
@@ -46,7 +41,7 @@ export default function BookingResumeHandler({
       delivery,
       pickup,
    } = useSelector(selectBookingData)
-   console.log('dateRange ->', dateRange)
+   console.log('dateRange ->', address)
    const strDateRange = dateRangeISOStringObjToString(dateRange)
 
    const { dialog, handleSetDialog } = useDialogWindow(null)
@@ -68,7 +63,7 @@ export default function BookingResumeHandler({
       bikesByUnits,
       dayPrice,
       phone,
-      address,
+
       name,
    }
 
