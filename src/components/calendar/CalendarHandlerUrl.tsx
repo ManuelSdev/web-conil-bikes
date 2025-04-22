@@ -6,7 +6,7 @@ import { es, tr } from 'date-fns/locale'
 
 import CustomCalendar from './CustomCalendar'
 
-import { createDateRangeString } from '@/utils/datesFns/createDateRangeString'
+import { createDateRangeString } from '@/utils/datesFns/dateUtils'
 import CustomCaptionLabel from './CustomCaptionLabel'
 import CustomRow from './CustomRow'
 import CustomDay from './CustomDay'

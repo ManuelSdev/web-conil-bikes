@@ -9,8 +9,6 @@ import {
 } from '@/lib/pg/crud/bikes'
 import { cookies } from 'next/headers'
 
-import React from 'react'
-
 import Stepper from '@/components/stepper/Stepper'
 import {
    getAppBikeSegments,
@@ -18,9 +16,9 @@ import {
 } from '@/utils/serverFns/serverFns'
 
 import StepShell from '@/components/stepper/StepShell'
-import NotifyCart from '@/components/stepper/notifyCart/NotifyCart'
 import AvailableBikeListHandler from '@/components/stepper/bikes/AvailableBikeListHandler'
 import BikesStepHandler from '@/components/stepper/bikes/BikesStepHandler'
+import NotifyCart from '@/components/stepper/notifyCart/NotifyCart'
 
 /**
  * CLAVE
@@ -66,9 +64,7 @@ export default async function BikesStepPage({ params }) {
     * 3. Llegando desde la página date o desde la página address
     */
    const { segmentList } = await getAppBikeSegments()
-
-   //console.log('##### userAuth ', userAuth)
-   //console.log('params ', params)
+   //console.log('segmentList ', segmentList)
    return (
       <StepShell
          title={'Bicicletas'}

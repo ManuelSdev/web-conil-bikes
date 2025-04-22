@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useCreateBookingMutation } from '@/lib/redux/apiSlices/bookingApi'
 import { useLazyCreateCookieQuery } from '@/lib/redux/apiSlices/cookieApi'
 import { selectBookingData } from '@/lib/redux/slices/bookingFormSlice'
-import { dateRangeISOStringObjToString } from '@/utils/datesFns/createDateRangeString'
+import { dateRangeISOStringObjToString } from '@/utils/datesFns/dateUtils'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Link from 'next/link'
@@ -15,10 +15,11 @@ import { DialogWindow } from '@/components/common/DialogWindow'
 import useDialogWindow from '@/components/common/useDialogWindow'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { use } from 'react'
 
 export default function BookingResumeHandler({
    setStep,
-   user,
+   userData,
    isAdmin = false,
    adminId,
 
@@ -28,7 +29,7 @@ export default function BookingResumeHandler({
    const router = useRouter()
    const dispatch = useDispatch()
 
-   const { userId, email, name, phone } = user
+   const { userId, email, name, phone } = userData
 
    const {
       bikes,
@@ -41,45 +42,13 @@ export default function BookingResumeHandler({
       delivery,
       pickup,
    } = useSelector(selectBookingData)
+   const bookingData = useSelector(selectBookingData)
+   const fullData = { ...bookingData, ...userData }
    console.log('dateRange ->', address)
    const strDateRange = dateRangeISOStringObjToString(dateRange)
 
    const { dialog, handleSetDialog } = useDialogWindow(null)
 
-   const queryData = {
-      adminId,
-      bikes,
-      userId,
-      isAdmin,
-      dateRange: strDateRange,
-      address,
-      bookingPrice,
-      email,
-      delivery,
-      pickup,
-      duration,
-      //necesitas estos para el email
-      dateRangeObj: dateRange,
-      bikesByUnits,
-      dayPrice,
-      phone,
-
-      name,
-   }
-
-   const resumeData = {
-      name,
-      phone,
-      email,
-      address,
-      delivery,
-      pickup,
-      bikesByUnits,
-      dateRange,
-      dayPrice,
-      bookingPrice,
-      duration,
-   }
    const [
       createBooking,
       {
@@ -98,11 +67,10 @@ export default function BookingResumeHandler({
 
    const handleSubmit = async (event) => {
       event.preventDefault()
-      console.log('queryData ->', queryData)
       const urlAfterBooking = isAdmin ? '/dashboard/bookings/calendar' : '/'
       //const emailHtml = getOrderResumeEmail(bookingData)
       try {
-         const res = await createBooking(queryData).unwrap()
+         const res = await createBooking(fullData).unwrap()
          console.log('res ->', res)
          /*  const desc = (
             <span>
@@ -164,7 +132,7 @@ export default function BookingResumeHandler({
          <BookingResume
             renderPrevButton={renderPrevButton}
             renderSubmitButton={renderSubmitButton}
-            {...resumeData}
+            {...fullData}
          />
       </div>
    )

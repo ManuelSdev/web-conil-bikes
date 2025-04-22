@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 'use client'
 import {
    bikesReseted,
@@ -6,10 +6,7 @@ import {
    selectBikes,
    selectDateRange,
 } from '@/lib/redux/slices/bookingFormSlice'
-import {
-   dateRangeISOStringObjToString,
-   dateRangeObjToISOStringObj,
-} from '@/utils/datesFns/createDateRangeString'
+
 import { useDispatch, useSelector } from 'react-redux'
 //CLAVE import { Link } from 'react-transition-progress/next'
 
@@ -20,6 +17,12 @@ import {
    useLazyCreateCookieQuery,
 } from '@/lib/redux/apiSlices/cookieApi'
 import DateStep from './DateStep'
+import { DateRange } from '@/types/dateTypes'
+import {
+   dateRangeISOStringObjToString,
+   dateRangeISOStrObjToDateRangeObj,
+   dateRangeObjToISOStringObj,
+} from '@/utils/datesFns/dateUtils'
 
 export default function DateStepHandler({
    setStep,
@@ -31,7 +34,11 @@ export default function DateStepHandler({
 }) {
    const dispatch = useDispatch()
    const storedDateRange = useSelector(selectDateRange)
+   //console.log('storedDateRange', storedDateRange)
+   //const { from, to } = dateRangeISOStrObjToDateRangeObj(storedDateRange)
+
    const storedBikes = useSelector(selectBikes)
+   // console.log('from, to', from, to)
    const [triggerCookie] = useLazyCreateCookieQuery()
 
    const {
@@ -47,11 +54,14 @@ export default function DateStepHandler({
    )
    const areBikes = !!(storedBikes.length > 0)
 
+   const handleSelect = (picker: string) => (selectedDate: DateRange) => {
+      const newDateRangeObj = { from, to, [picker]: selectedDate }
+      const isoStringRangeObj = dateRangeObjToISOStringObj(newDateRangeObj)
+      dispatch(dateRangeSelected(isoStringRangeObj))
+   }
    const dispatchBikesReseted = () => {
       dispatch(bikesReseted())
    }
-   const dispatchRangeSelected = (selectedDaterange) =>
-      dispatch(dateRangeSelected(selectedDaterange))
 
    const nextUrl = isAdmin
       ? `/dashboard/bookings/new/bikes?userId=${userId}&dated=true`
@@ -60,19 +70,20 @@ export default function DateStepHandler({
    return (
       <DateStep
          areBikes={areBikes}
+         //  from={from}
+         //  to={to}
          storedDateRange={storedDateRange}
+         bikesReseted={bikesReseted}
+         handleSelect={handleSelect}
          nextUrl={nextUrl}
-         dispatchBikesReseted={dispatchBikesReseted}
-         dispatchRangeSelected={dispatchRangeSelected}
+         onDispatch={dispatchBikesReseted}
       />
    )
 }
-
+/*
 function dateRangeObjToISOString(dateRange) {
-   //console.log('dateRange @->', dateRange)
    const isoStringRangeObj = dateRangeObjToISOStringObj(dateRange)
-   ////console.log('isoStringRangeObj ->', isoStringRangeObj)
    const strDateRange = dateRangeISOStringObjToString(isoStringRangeObj)
-   ////console.log('strDateRange ->', strDateRange)
    return strDateRange
 }
+*/

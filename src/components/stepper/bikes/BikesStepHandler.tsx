@@ -19,7 +19,7 @@ import {
 import {
    dateRangeISOStringObjToString,
    stringDateRangeToISOStringObj,
-} from '@/utils/datesFns/createDateRangeString'
+} from '@/utils/datesFns/dateUtils'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -45,9 +45,9 @@ export default function BikesStepHandler({
    const router = useRouter()
    const [deleteCookie] = useLazyDeleteCookieQuery()
 
-   const strDateRangeObj = useSelector(selectDateRange)
-   const dateRange = dateRangeISOStringObjToString(strDateRangeObj)
-   const { from, to } = strDateRangeObj
+   const dateRange = useSelector(selectDateRange)
+   //const dateRange = dateRangeISOStringObjToString(strDateRangeObj)
+   const { from, to } = dateRange
    const isDateRange = !!from && !!to
 
    const bikeSearchParams = useSelector(selectBikeSearchParams)
@@ -60,11 +60,13 @@ export default function BikesStepHandler({
     * Si tengo los datos del formulario previos, no hago la petición
     */
    const {
-      data: availableSizes,
+      data: {
+         data: { availableSizes },
+      },
       isLoading: isLoadingSizes,
       isSuccess: isSuccessSizes,
    } = useGetAvailableSizesQuery({ dateRange }, { skip: !!loadedData })
-
+   //TODO: mostrar error en cliente/navegador o ui
    const typesQuery = useLazyGetAvailableTypesQuery()
 
    const rangesMutation = useGetAvailableRangesMutation()

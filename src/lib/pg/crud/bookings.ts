@@ -50,8 +50,10 @@ export async function getBookingWithBikesById(bookingId) {
 }
 
 export async function createBooking(data) {
+   const strDateRange = dateRangeISOStringObjToString(data.dateRangeObj)
+   const addBookingData = { ...data, dateRange: strDateRange }
    try {
-      const { bookingId } = await addBooking(data)
+      const { bookingId } = await addBooking(addBookingData)
       console.log(
          'Reserva creada en createBooking con Id de reserva -> ',
          bookingId

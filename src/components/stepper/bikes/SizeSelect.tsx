@@ -16,7 +16,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/ui/select'
-import { sizeMap } from '@/utils/appValues'
+import { bikeSizeMap } from '@/constants/bikeConstants'
 
 export default function SizeSelect({
    form,
@@ -27,7 +27,7 @@ export default function SizeSelect({
    loadedSize,
    loadedData,
 }) {
-   const sizeArray = [...sizeMap.entries()] // Convertir sizeMap a un array antes de iterar
+   const sizeArray = [...bikeSizeMap.entries()] // Convertir sizeMap a un array antes de iterar
 
    return (
       <FormField

@@ -7,7 +7,7 @@ import {
    selectBikeSearchParams,
    selectDateRange,
 } from '@/lib/redux/slices/bookingFormSlice'
-import { dateRangeISOStringObjToString } from '@/utils/datesFns/createDateRangeString'
+import { dateRangeISOStringObjToString } from '@/utils/datesFns/dateUtils'
 import { useRouter } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux'
 import AvailableBikeList from './AvailableBikeList'

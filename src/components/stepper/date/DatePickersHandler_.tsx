@@ -1,46 +1,54 @@
 // @ts-nocheck
+'use client'
 import DatePicker from '@/components/datepicker/DatePicker'
-import { dateRangeSelected } from '@/lib/redux/slices/bookingFormSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+   bikesReseted,
+   dateRangeSelected,
+   selectBikes,
+   selectDateRange,
+} from '@/lib/redux/slices/bookingFormSlice'
 const FROM = 'from'
 const TO = 'to'
 
 export default function DatePickersHandler({
-   //from,
-   //to,
-
+   //handleSelect,
    storedDateRange,
-   dispatchRangeSelected,
    ...props
 }) {
    const today = new Date()
    const nextDay = new Date(today)
    nextDay.setDate(today.getDate() + 1)
-
+   const dispatch = useDispatch()
    const nextYear = new Date(
       today.getFullYear() + 1,
       today.getMonth(),
       today.getDate()
    )
    const { from, to } = storedDateRange
+   const { from: isoFrom, to: isoTo } = storedDateRange
 
-   const selectedFrom = new Date(from)
+   const selectedFrom = from ? new Date(from) : ''
+   console.log('selectedFrom', selectedFrom)
    const selectedTo = new Date(to)
-   const selectedFromNextDay = new Date(
-      selectedFrom.setDate(selectedFrom.getDate() + 1)
-   )
+   const selectedFromNextDay = from
+      ? new Date(selectedFrom.setDate(selectedFrom.getDate() + 1))
+      : today
    const selectedFromPrevDay = new Date(
       selectedTo.setDate(selectedTo.getDate() - 1)
    )
-   //TODO: crea customDay para señañar el dia seleccionado en to y from
-
-   const fnSelect = (picker: string) => (selectedDate: DateRange) => {
+   const handleSelect = (picker: string) => (selectedDate: DateRange) => {
+      console.log('picker', picker)
+      console.log('selectedDate', selectedDate)
       const selectedDaterange = {
          ...storedDateRange,
          [picker]: selectedDate.toISOString(),
       }
-      dispatchRangeSelected(selectedDaterange)
+      console.log('selectedDaterange', selectedDaterange)
+      // const isoStringRangeObj = dateRangeObjToISOStringObj(newDateRangeObj)
+      dispatch(dateRangeSelected(selectedDaterange))
    }
-
+   //TODO: crea customDay para señañar el dia seleccionado en to y from
    return (
       <div className="grow justify-center gap-5">
          <div className="flex w-full justify-between gap-5 py-3 md:justify-center">
@@ -49,8 +57,7 @@ export default function DatePickersHandler({
                className={'w-[45%] grow'}
                label="Inicio"
                date={from}
-               fnSelect={fnSelect(FROM)}
-               //handleSelects={handleSelect(FROM)}
+               handleSelect={handleSelect(FROM)}
                disabled={[
                   { before: nextDay },
                   { after: to ? selectedFromPrevDay : nextYear },
@@ -66,7 +73,7 @@ export default function DatePickersHandler({
                className={'w-[45%] grow'}
                label="Fin"
                date={to}
-               fnSelect={fnSelect(TO)}
+               handleSelect={handleSelect(TO)}
                //selected={selected}
                {...props}
             />

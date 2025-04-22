@@ -15,7 +15,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/ui/select'
-import { typeMap } from '@/utils/appValues'
+import { bikeTypeTranslationMap } from '@/constants/bikeConstants'
 import { capitalizeFirst } from '@/utils/functions'
 
 export default function TypeSelect({
@@ -28,7 +28,7 @@ export default function TypeSelect({
 
    // selectKey,
 }) {
-   const typeArray = [...typeMap.entries()] // Convertir el Map en un array antes de iterar
+   const typeArray = [...bikeTypeTranslationMap.entries()] // Convertir el Map en un array antes de iterar
    const { size, type } = form.watch()
    return (
       <FormField

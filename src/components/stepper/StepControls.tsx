@@ -26,8 +26,6 @@ export default function StepControls(props) {
 }
 
 function NextButon({ nextUrl, prevUrl, nextIsDisabled }) {
-   console.log('nextIsDisabled', nextIsDisabled)
-
    return nextIsDisabled ? (
       <Button
          disabled

@@ -23,7 +23,7 @@ function classNames(...classes) {
 }
 const str = 'b/a'
 //console.log(['a', 'b', 'c'].some((item) => str.includes(item)))
-console.log(['/a'].includes('/'))
+//console.log(['/a'].includes('/'))
 const contains = (str, arr) => arr.some((item) => str.includes(item))
 
 export default function NavBarButtons() {

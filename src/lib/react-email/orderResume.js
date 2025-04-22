@@ -1,9 +1,9 @@
 import { BIKE_RANGES_MAP, BIKE_TYPES_MAP } from '@/utils/app/appValues'
 import { format } from 'date-fns'
 
-const createBikeList = (bikes) => {
+const createBikeList = (bikesByUnits) => {
    let bikeList = ''
-   bikes.forEach((bike, idx) => {
+   bikesByUnits.forEach((bike, idx) => {
       const {
          modelBrand,
          modelName,
@@ -18,7 +18,7 @@ const createBikeList = (bikes) => {
       const name = `${modelBrand} ${modelName}`
       const type = BIKE_TYPES_MAP[modelType]
       const range = BIKE_RANGES_MAP[modelRange]
-      const length = bikes.length
+      const length = bikesByUnits.length
       const marginTop = idx === 0 ? '0' : '0.5rem'
       const bikeText = `
 
@@ -109,28 +109,28 @@ const getOrderResumeEmail = ({
    phone,
    email,
    address,
-   delivery: del,
-   pickup: pick,
-   bikesByUnits: bikes,
-   dateRangeObj: dateRange,
+   delivery,
+   pickup,
+   bikesByUnits,
+   dateRange,
    dayPrice,
    bookingPrice,
    duration,
    bookingId,
 }) => {
    // console.log('bikes en orderResume ->', bikes)
-   const bikeList = createBikeList(bikes)
+   const bikeList = createBikeList(bikesByUnits)
    //console.log('dateRange en orderResume ->', dateRange)
    const date = `Del ${format(
       new Date(dateRange.from),
       'dd/MM/yyyy'
    )} al ${format(new Date(dateRange.to), 'dd/MM/yyyy')}`
 
-   const delivery = del
+   const deliveryTxt = delivery
       ? 'Entrega de bicicletas en tienda el día de inicio de la reserva'
       : 'Entrega de bicicletas a domicilio el día previo al inicio de la reserva'
 
-   const pickup = pick
+   const pickupTxt = pickup
       ? 'Recogida de bicicletas en tienda el día de finalización de la reserva'
       : 'Recogida de bicicletas a domicilio el día posterior al final de la reserva'
 
@@ -494,7 +494,7 @@ const getOrderResumeEmail = ({
                                           data-id="__react-email-column"
                                           style="vertical-align: baseline"
                                        >
-                                          <strong>${delivery}</strong>
+                                          <strong>${deliveryTxt}</strong>
                                        </td>
                                     </tr>
                                  </tbody>
@@ -521,7 +521,7 @@ const getOrderResumeEmail = ({
                                           data-id="__react-email-column"
                                           style="vertical-align: baseline"
                                        >
-                                          <strong>${pickup}</strong>
+                                          <strong>${pickupTxt}</strong>
                                        </td>
                                     </tr>
                                  </tbody>

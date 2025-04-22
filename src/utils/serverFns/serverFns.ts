@@ -9,7 +9,7 @@ import { findUserByEmail, findUserIdByEmail } from '@/lib/pg/repos/users'
 export async function getUserPageAuth() {
    const cookieStore = await cookies()
    const userSessionCookie = cookieStore.get('userSession')
-   console.log('userSessionCookie -> ', userSessionCookie)
+   //console.log('userSessionCookie -> ', userSessionCookie)
    if (!userSessionCookie) return { isLogged: false }
 
    try {

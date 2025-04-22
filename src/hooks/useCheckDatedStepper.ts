@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { selectDateRange } from '@/lib/redux/slices/bookingFormSlice'
-import { dateRangeISOStringObjToString } from '@/utils/datesFns/createDateRangeString'
+import { dateRangeISOStringObjToString } from '@/utils/datesFns/dateUtils'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'

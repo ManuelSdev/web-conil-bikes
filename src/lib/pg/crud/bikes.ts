@@ -23,8 +23,19 @@ export async function getAvailableSizesInRange({ dateRange }) {
          'availableSizes en getAvailableSizesInRange-> ',
          availableSizes
       )
-      return NextResponse.json(availableSizes, { status: 201 })
+      return NextResponse.json(
+         { succes: true, data: { availableSizes } },
+         { status: 201 }
+      )
    } catch (error) {
+      console.error('Error en consulta a la base de datos: ', error)
+      return NextResponse.json(
+         {
+            succes: false,
+            message: 'Error en consulta a la base de datos',
+         },
+         { status: 500 }
+      )
       //console.log('### ERROR CRUD api/getAvailableSizesInRange -> ', error)
    }
 }

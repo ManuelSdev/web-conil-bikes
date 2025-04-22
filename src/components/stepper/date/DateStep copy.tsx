@@ -1,25 +1,34 @@
 // @ts-nocheck
-
+'use client'
 import DatePickersHandler from './DatePickersHandler'
-import StepControls from '../StepControls'
-import { AlertDialogButton } from '@/components/common/AlertDialogButton'
-import { cn } from '@/utils/functions'
 //import { Link } from 'react-transition-progress/next'
+
+import StepControls from '../StepControls'
 // CLAVE import { ArrowRight } from '@phosphor-icons/react'
 
-export default function DateStep(props) {
-   const {
-      storedDateRange: { from, to },
-      areBikes,
-      dispatchBikesReseted,
-      nextUrl,
-   } = props
+import { AlertDialogButton } from '@/components/common/AlertDialogButton'
+import { cn } from '@/utils/functions'
 
+export default function DateStep({
+   areBikes,
+
+   handleSelect,
+   nextUrl,
+   storedDateRange,
+   onDispatch,
+}) {
+   const { from, to } = storedDateRange
    return (
       <div className={'mx-auto max-w-xs'}>
          {/*<DialogLoader open={true} />*/}
 
-         <DatePickersHandler {...props} />
+         <DatePickersHandler
+            isDisabled={areBikes}
+            from={from}
+            to={to}
+            handleSelect={handleSelect}
+            storedDateRange={storedDateRange}
+         />
          <div className="mt-4 flex">
             <AlertDialogButton
                className={cn({ 'hidden': !areBikes }, 'grow')}
@@ -31,7 +40,7 @@ export default function DateStep(props) {
                actionText={'Modificar fecha'}
                cancelText={'Cancelar'}
                triggerButtonText={'Modificar fecha'}
-               handleAction={(event) => dispatchBikesReseted()}
+               handleAction={(event) => onDispatch()}
             />
          </div>
 

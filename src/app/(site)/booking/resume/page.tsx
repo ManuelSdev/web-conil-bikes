@@ -16,7 +16,7 @@ export default async function UserBookingStepperPage({ params }) {
    const { name, email, phone, userId } = userAuth
    return (
       <Stepper step={4} childClassName="sm:w-full">
-         <BookingResumeHandler user={userAuth} />
+         <BookingResumeHandler userData={userAuth} />
       </Stepper>
    )
 }

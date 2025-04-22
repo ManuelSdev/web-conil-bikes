@@ -1,10 +1,7 @@
 // @ts-nocheck
 'use client'
-
-import { format } from 'date-fns'
-
 import { Calendar as CalendarIcon } from 'lucide-react'
-
+import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -12,14 +9,14 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from '@/components/ui/popover'
-cn
-import { useState } from 'react'
-import { es } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
+import { es } from 'date-fns/locale'
+import { useState } from 'react'
 
 export default function DatePicker({
    date,
-   handleSelect,
+   areBikes,
+   fnSelect,
    label,
    className,
    isDisabled,
@@ -27,8 +24,9 @@ export default function DatePicker({
    selected: el,
 }) {
    const [open, setopen] = useState(false)
+
    const onSelect = (selectedDate) => {
-      handleSelect(selectedDate)
+      fnSelect(selectedDate)
       setopen(false)
    }
    const today = new Date()
@@ -42,7 +40,7 @@ export default function DatePicker({
       <Popover onOpenChange={setopen} open={open}>
          <PopoverTrigger asChild>
             <Button
-               disabled={isDisabled}
+               disabled={areBikes}
                variant={'outline'}
                className={cn(
                   //    'w-[280px] ',

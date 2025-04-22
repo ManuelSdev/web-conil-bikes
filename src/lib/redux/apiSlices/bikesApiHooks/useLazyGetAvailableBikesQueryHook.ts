@@ -6,7 +6,7 @@ import {
    selectDateRange,
 } from '../../slices/bookingFormSlice'
 import { useLazyGetAvailableBikesQuery } from '../bikeApi'
-import { dateRangeISOStringObjToString } from '@/utils/datesFns/createDateRangeString'
+import { dateRangeISOStringObjToString } from '@/utils/datesFns/dateUtils'
 
 export default function useLazyGetAvailableBikesQueryHook() {
    const bikeSearchParams = useSelector(selectBikeSearchParams)

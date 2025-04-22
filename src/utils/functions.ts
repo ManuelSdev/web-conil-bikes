@@ -1,7 +1,8 @@
 // @ts-nocheck
-import { bookingStateMap, typeMap, rangeMap } from './appValues'
+
 import clsx from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { bookingStatusTranslationMap } from '@/types/bookingTypes'
 //Primera letra en mayúscula
 export const capitalizeFirst = (text) =>
    text.charAt(0).toUpperCase() + text.slice(1)
@@ -10,17 +11,19 @@ export const pipe =
    (...fns) =>
    (arg) =>
       fns.reduce((acc, fn) => fn(acc), arg)
-
+/*
 export const mappedBookingState = (state: BookingStateEnum) =>
-   bookingStateMap.get(state)?.charAt(0).toUpperCase() +
-   bookingStateMap.get(state)?.slice(1)
+   bookingStatusTranslationMap.get(state)?.charAt(0).toUpperCase() +
+   bookingStatusTranslationMap.get(state)?.slice(1)
 
 export const mappedBikeType = (type: BikeType) =>
-   typeMap.get(type)?.charAt(0).toUpperCase() + typeMap.get(type)?.slice(1)
+   bikeTypeTranslationMap.get(type)?.charAt(0).toUpperCase() +
+   bikeTypeTranslationMap.get(type)?.slice(1)
 
 export const mappedBikeRange = (range: BikeRange) =>
-   rangeMap.get(range)?.charAt(0).toUpperCase() + rangeMap.get(range)?.slice(1)
-
+   bikeRangeTranslationMap.get(range)?.charAt(0).toUpperCase() +
+   bikeRangeTranslationMap.get(range)?.slice(1)
+*/
 export const _mappedBookingState = (state) =>
    BOOKING_STATES_MAP[state]?.charAt(0).toUpperCase() +
    BOOKING_STATES_MAP[state]?.slice(1)

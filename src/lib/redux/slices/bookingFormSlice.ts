@@ -2,7 +2,6 @@
 import { createSelector, createSlice, current } from '@reduxjs/toolkit'
 import { selectAppBikesConfig } from './appConfigSlice'
 import { differenceInDays } from 'date-fns'
-import { stringDateRangeToISOStringObj } from '@/utils/datesFns/createDateRangeString'
 import { bookingApi } from '../apiSlices/bookingApi'
 
 const initialState = {
@@ -54,7 +53,8 @@ const bookingFormSlice = createSlice({
       searchKeysLoaded: (state, action) => {
          //console.log('searchBikesKeysLoaded action.payload _> ', action.payload)
          const { dateRange, size, type, range } = action.payload
-         state.dateRange = stringDateRangeToISOStringObj(dateRange)
+         // state.dateRange = stringDateRangeToISOStringObj(dateRange)
+         state.dateRange = dateRange
          state.bikeSearchParams = { size, type, range }
          // addBike(state, { payload: bike })
       },
@@ -303,7 +303,7 @@ function addBike(state, action) {
 
 function getBikeSegmentPrice(segmentList) {
    return (bike) => {
-      //console.log('segmentList en getBikeSegmentPrice -> ', segmentList)
+      // console.log('segmentList en getBikeSegmentPrice -> ', segmentList)
       const segment = segmentList.filter(
          (segment) =>
             segment.modelType === bike.modelType &&

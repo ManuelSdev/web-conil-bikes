@@ -15,7 +15,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/ui/select'
-import { rangeMap } from '@/utils/appValues'
+import { bikeRangeTranslationMap } from '@/constants/bikeConstants'
 import { capitalizeFirst } from '@/utils/functions'
 
 export default function RangeSelect({
@@ -27,7 +27,7 @@ export default function RangeSelect({
    isLoadingRange,
 }) {
    const { size, type } = form.watch()
-   const rangeArray = [...rangeMap.entries()] // Convertir el Map en un array antes de la iteración
+   const rangeArray = [...bikeRangeTranslationMap.entries()] // Convertir el Map en un array antes de la iteración
 
    const rangeInfo = (range) => {
       let price
