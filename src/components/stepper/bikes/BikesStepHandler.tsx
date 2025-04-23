@@ -17,7 +17,7 @@ import {
    selectSegmentList,
 } from '@/lib/redux/slices/bookingFormSlice'
 import {
-   dateRangeISOStringObjToString,
+   serializeDateRangeISOString,
    stringDateRangeToISOStringObj,
 } from '@/utils/datesFns/dateUtils'
 import { useEffect, useState } from 'react'
@@ -46,7 +46,7 @@ export default function BikesStepHandler({
    const [deleteCookie] = useLazyDeleteCookieQuery()
 
    const dateRange = useSelector(selectDateRange)
-   //const dateRange = dateRangeISOStringObjToString(strDateRangeObj)
+   const strDateRange = serializeDateRangeISOString(dateRange)
    const { from, to } = dateRange
    const isDateRange = !!from && !!to
 
@@ -60,16 +60,18 @@ export default function BikesStepHandler({
     * Si tengo los datos del formulario previos, no hago la petición
     */
    const {
-      data: {
-         data: { availableSizes },
-      },
+      data: availableSizes,
       isLoading: isLoadingSizes,
       isSuccess: isSuccessSizes,
-   } = useGetAvailableSizesQuery({ dateRange }, { skip: !!loadedData })
+      isError: isErrorSizes,
+   } = useGetAvailableSizesQuery(
+      { dateRange: strDateRange },
+      { skip: !!loadedData }
+   )
    //TODO: mostrar error en cliente/navegador o ui
-   const typesQuery = useLazyGetAvailableTypesQuery()
 
-   const rangesMutation = useGetAvailableRangesMutation()
+   const getTypesQuery = useLazyGetAvailableTypesQuery()
+   const getRangesMutation = useGetAvailableRangesMutation()
 
    /* Uso la mutation en lugar de la query porque la query no tiene reset
    const [
@@ -131,16 +133,17 @@ export default function BikesStepHandler({
    return (
       <BikesStep
          bikesQuantity={bikesQuantity}
-         prevUrl={prevUrl}
-         nextUrl={nextUrl}
          onDispatch={dispatchBikeSearchParamsSelected}
          dateRange={dateRange}
+         strDateRange={strDateRange}
          availableSizes={availableSizes}
          segmentList={segmentList}
          loadedSearchKeys={searchKeys}
+         prevUrl={prevUrl}
+         nextUrl={nextUrl}
          /** */
-         rangesMutation={rangesMutation}
-         typesQuery={typesQuery}
+         getRangesMutation={getRangesMutation}
+         getTypesQuery={getTypesQuery}
       />
    )
 }

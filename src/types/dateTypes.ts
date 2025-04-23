@@ -13,3 +13,10 @@ export type DateRange = { from: Date; to: Date }
  * Este tipo es el resultado de aplicar `.toISOString()` a un `DateRange`.
  */
 export type DateRangeISOString = { from: DateISOString; to: DateISOString }
+
+/**
+ * Representa un rango de fechas serializado en formato string.
+ * El rango sigue la estructura: '[YYYY-MM-DDTHH:mm:ss.sssZ,YYYY-MM-DDTHH:mm:ss.sssZ]'
+ * Las fechas dentro del rango están en formato ISO 8601 generado por `.toISOString()`.
+ */
+export type SerializedDateRange = `[${string},${string}]`

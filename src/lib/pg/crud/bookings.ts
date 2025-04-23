@@ -50,7 +50,7 @@ export async function getBookingWithBikesById(bookingId) {
 }
 
 export async function createBooking(data) {
-   const strDateRange = dateRangeISOStringObjToString(data.dateRangeObj)
+   const strDateRange = serializeDateRangeISOString(data.dateRangeObj)
    const addBookingData = { ...data, dateRange: strDateRange }
    try {
       const { bookingId } = await addBooking(addBookingData)

@@ -20,12 +20,12 @@ const FormSchema = z.object({
 })
 
 export default function BikeFiltersForm({
-   dateRange,
+   strDateRange,
    availableSizes,
    segmentList,
    loadedSearchKeys,
-   typesQuery,
-   rangesMutation,
+   getTypesQuery,
+   getRangesMutation,
    ...props
 }) {
    const form = useForm(
@@ -50,12 +50,12 @@ export default function BikeFiltersForm({
          unsubscribe: unsubscribeTypes,
       },
       lastPromiseInfoTypes,
-   ] = typesQuery
+   ] = getTypesQuery
 
    const [
       triggerRange,
       { data: availableRanges, isLoading: isLoadingRange, reset: resetRanges },
-   ] = rangesMutation
+   ] = getRangesMutation
 
    /* Uso la mutation en lugar de la query porque la query no tiene reset
    const [
@@ -71,14 +71,14 @@ export default function BikeFiltersForm({
       form.resetField('range')
       availableRanges && resetRanges()
 
-      triggerType({ dateRange, size: selectedSizeValue })
+      triggerType({ dateRange: strDateRange, size: selectedSizeValue })
    }
 
    const handleType = (field) => (selectedTypeValue) => {
       field.onChange(selectedTypeValue)
       form.resetField('range')
 
-      triggerRange({ dateRange, size, type: selectedTypeValue })
+      triggerRange({ dateRange: strDateRange, size, type: selectedTypeValue })
    }
 
    const handleRange = (field) => (selectedRangeValue) => {
@@ -142,7 +142,6 @@ export default function BikeFiltersForm({
 }
 
 function ShowBikesButton({ size, type, range, isFetchingBikes, onDispatch }) {
-   console.log('range', range)
    return isFetchingBikes ? (
       <Button variant="reverse" className="grow">
          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Cargando...

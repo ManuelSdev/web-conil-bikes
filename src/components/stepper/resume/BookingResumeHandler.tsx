@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useCreateBookingMutation } from '@/lib/redux/apiSlices/bookingApi'
 import { useLazyCreateCookieQuery } from '@/lib/redux/apiSlices/cookieApi'
 import { selectBookingData } from '@/lib/redux/slices/bookingFormSlice'
-import { dateRangeISOStringObjToString } from '@/utils/datesFns/dateUtils'
+import { serializeDateRangeISOString } from '@/utils/datesFns/dateUtils'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Link from 'next/link'
@@ -45,7 +45,7 @@ export default function BookingResumeHandler({
    const bookingData = useSelector(selectBookingData)
    const fullData = { ...bookingData, ...userData }
    console.log('dateRange ->', address)
-   const strDateRange = dateRangeISOStringObjToString(dateRange)
+   const strDateRange = serializeDateRangeISOString(dateRange)
 
    const { dialog, handleSetDialog } = useDialogWindow(null)
 

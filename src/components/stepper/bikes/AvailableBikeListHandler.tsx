@@ -7,7 +7,7 @@ import {
    selectBikeSearchParams,
    selectDateRange,
 } from '@/lib/redux/slices/bookingFormSlice'
-import { dateRangeISOStringObjToString } from '@/utils/datesFns/dateUtils'
+import { serializeDateRangeISOString } from '@/utils/datesFns/dateUtils'
 import { useRouter } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux'
 import AvailableBikeList from './AvailableBikeList'
@@ -20,7 +20,7 @@ export default function AvailableBikeListHandler({
 }) {
    //console.log('AvailableBikeListUserHandler @@@->')
    const storedDateRange = useSelector(selectDateRange)
-   const dateRange = dateRangeISOStringObjToString(storedDateRange)
+   const dateRange = serializeDateRangeISOString(storedDateRange)
    const bikeSearchParams = useSelector(selectBikeSearchParams)
 
    const router = useRouter()
@@ -28,7 +28,7 @@ export default function AvailableBikeListHandler({
    const [triggerCookie] = useLazyCreateCookieQuery()
 
    const dispatch = useDispatch()
-
+   //TODO quita esto y mete aquí el hook si no lo usas en ninguna parte
    const { availableBikes, isFetchingBikes, isSuccessBikes } =
       useLazyGetAvailableBikesQueryHook()
 

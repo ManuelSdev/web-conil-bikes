@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react'
 import { es, tr } from 'date-fns/locale'
 import CustomCalendar from './CustomCalendar'
-import { createDateRangeString } from '@/utils/datesFns/dateUtils'
+import { serializeDateRange } from '@/utils/datesFns/dateUtils'
 import CustomCaptionLabel from './CustomCaptionLabel'
 import CustomRow from './CustomRow'
 import CustomDay from './CustomDay'
@@ -23,8 +23,8 @@ export default function CalendarHandler({ bookingDates: initialBookingDates }) {
    const handleSelect = (date) => {
       router.push(`/dashboard/bookings/list/${date.toISOString()}`)
    }
-   const handeDateRange = (displayMonth) => {
-      const dateRange = createDateRangeString({
+   const handleDateRange = (displayMonth) => {
+      const dateRange = serializeDateRange({
          // @ts-ignore
          fromDate: displayMonth,
          outsideDates: true,
@@ -54,7 +54,7 @@ export default function CalendarHandler({ bookingDates: initialBookingDates }) {
       bookingDatesOnMonth && setBookingDates(bookingDatesOnMonth)
    }, [dateRange, bookingDatesOnMonth])
 
-   const handleMonthChange = (displayMonth) => handeDateRange(displayMonth)
+   const handleMonthChange = (displayMonth) => handleDateRange(displayMonth)
    return (
       // @ts-ignore
       <CustomCalendar
@@ -129,7 +129,7 @@ console.log('lastDayInLastWeek toISOString ->', lastDayInLastWeek.toISOString())
 
 /*
    const monthChangeHandler = async (displayMonth) => {
-      const dateRange = createDateRangeString({
+      const dateRange = serializeDateRange({
          fromDate: displayMonth,
          outsideDates: true,
       })

@@ -6,10 +6,6 @@ import {
    selectBikes,
    selectDateRange,
 } from '@/lib/redux/slices/bookingFormSlice'
-import {
-   dateRangeISOStringObjToString,
-   dateRangeObjToISOStringObj,
-} from '@/utils/datesFns/createDateRangeString'
 import { useDispatch, useSelector } from 'react-redux'
 //CLAVE import { Link } from 'react-transition-progress/next'
 
@@ -66,13 +62,4 @@ export default function DateStepHandler({
          dispatchRangeSelected={dispatchRangeSelected}
       />
    )
-}
-
-function dateRangeObjToISOString(dateRange) {
-   //console.log('dateRange @->', dateRange)
-   const isoStringRangeObj = dateRangeObjToISOStringObj(dateRange)
-   ////console.log('isoStringRangeObj ->', isoStringRangeObj)
-   const strDateRange = dateRangeISOStringObjToString(isoStringRangeObj)
-   ////console.log('strDateRange ->', strDateRange)
-   return strDateRange
 }

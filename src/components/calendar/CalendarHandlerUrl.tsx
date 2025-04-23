@@ -6,7 +6,7 @@ import { es, tr } from 'date-fns/locale'
 
 import CustomCalendar from './CustomCalendar'
 
-import { createDateRangeString } from '@/utils/datesFns/dateUtils'
+import { serializeDateRange } from '@/utils/datesFns/dateUtils'
 import CustomCaptionLabel from './CustomCaptionLabel'
 import CustomRow from './CustomRow'
 import CustomDay from './CustomDay'
@@ -44,7 +44,7 @@ export default function CalendarHandlerUrl({
    }
    const handeDateRange = async (displayMonth) => {
       //console.log('handeDateRange displayMonth -> ', displayMonth)
-      const dateRange = createDateRangeString({
+      const dateRange = serializeDateRange({
          // @ts-ignore
          fromDate: displayMonth,
          outsideDates: true,
@@ -167,7 +167,7 @@ console.log('lastDayInLastWeek toISOString ->', lastDayInLastWeek.toISOString())
 
 /*
    const monthChangeHandler = async (displayMonth) => {
-      const dateRange = createDateRangeString({
+      const dateRange = serializeDateRange({
          fromDate: displayMonth,
          outsideDates: true,
       })

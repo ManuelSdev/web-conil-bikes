@@ -25,10 +25,16 @@ export const bikeApi = baseApi.injectEndpoints({
          query: ({ dateRange }) =>
             //  console.log('dateRange QUERY --> ', dateRange) ||
             `bikes/available/${dateRange}`,
+         transformResponse: (response, meta, arg) => {
+            return response.data.availableSizes
+         },
       }),
 
       getAvailableTypes: builder.query({
          query: ({ dateRange, size }) => `bikes/available/${dateRange}/${size}`,
+         transformResponse: (response, meta, arg) => {
+            return response.data.availableTypes
+         },
       }),
       /* Uso mutation para usar el reset de la cache
       getAvailableRanges: builder.query({
@@ -42,6 +48,9 @@ export const bikeApi = baseApi.injectEndpoints({
             url: `bikes/available/${dateRange}/${size}/${type}`,
             method: 'GET', // Especificamos el método GET
          }),
+         transformResponse: (response, meta, arg) => {
+            return response.data.availableRanges
+         },
          invalidatesTags: ['BikeRanges'], // Mantén las tags si necesitas invalidar el caché
       }),
       getAvailableStock: builder.query({
@@ -57,7 +66,7 @@ export const bikeApi = baseApi.injectEndpoints({
             // //console.log('@@@@@@@@@@@@@@ transformRes res _> ', res)
             // //console.log('@@@@@@@@@@@@@@ transformRes status _> ', status)
 
-            return response
+            return response.data.availableBikes
          },
       }),
 

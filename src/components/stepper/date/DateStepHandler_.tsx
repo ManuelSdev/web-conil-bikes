@@ -19,7 +19,7 @@ import {
 import DateStep from './DateStep'
 import { DateRange } from '@/types/dateTypes'
 import {
-   dateRangeISOStringObjToString,
+   serializeDateRangeISOString,
    dateRangeISOStrObjToDateRangeObj,
    dateRangeObjToISOStringObj,
 } from '@/utils/datesFns/dateUtils'
@@ -83,7 +83,7 @@ export default function DateStepHandler({
 /*
 function dateRangeObjToISOString(dateRange) {
    const isoStringRangeObj = dateRangeObjToISOStringObj(dateRange)
-   const strDateRange = dateRangeISOStringObjToString(isoStringRangeObj)
+   const strDateRange = serializeDateRangeISOString(isoStringRangeObj)
    return strDateRange
 }
 */

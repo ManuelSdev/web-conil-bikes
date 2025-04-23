@@ -8,24 +8,24 @@ import {
 } from '@/types/bikeTypes'
 
 export const bikeSizeMap = new Map<BikeSize, BikeSizeRange>([
-   ['S', [150, 160]],
-   ['M', [161, 170]],
-   ['L', [171, 180]],
-   ['XL', [181, 190]],
-   ['XXL', [191, 200]],
+   ['s', [150, 160]],
+   ['m', [161, 170]],
+   ['l', [171, 180]],
+   ['xl', [181, 190]],
+   ['xxl', [191, 200]],
 ])
 
 export const bikeTypeTranslationMap = new Map<BikeType, BikeTypeLabel>([
-   ['mountain', 'Montaña'],
-   ['city', 'Paseo'],
-   ['electric', 'Eléctrica'],
-   ['road', 'Carretera'],
+   ['mountain', 'montaña'],
+   ['city', 'paseo'],
+   ['electric', 'eléctrica'],
+   ['road', 'carretera'],
 ])
 
 export const bikeRangeTranslationMap = new Map<BikeRange, BikeRangeLabel>([
-   ['top', 'Premium'],
-   ['high', 'Alta'],
-   ['mid', 'Media'],
-   ['ride', 'Paseo/Trekking'],
+   ['top', 'premium'],
+   ['high', 'alta'],
+   ['mid', 'media'],
+   ['ride', 'paseo/trekking'],
 ])
 const typeObject = Object.fromEntries(bikeTypeTranslationMap)

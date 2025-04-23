@@ -38,7 +38,7 @@ export default function SelectedBikeList({
                         </p>
                         <p className="truncate text-xs leading-5 text-gray-500">
                            {`${capitalizeFirst(
-                              typeMap.get(bike.modelType)
+                              bikeTypeTranslationMap.get(bike.modelType)
                            )}, talla ${bike.bikeSize.toUpperCase()}`}
                         </p>
                      </div>

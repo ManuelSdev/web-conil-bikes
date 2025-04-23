@@ -8,31 +8,23 @@ import {
 } from 'date-fns'
 
 import { pipe } from '../functions'
-import {
-   DateRangeISOString,
-   DateRange,
-   SerializedDateRange,
-} from '@/types/dateTypes'
+import { DateRangeISOString, DateRange } from '@/types/dateTypes'
 
 /**
  * Convierte un rango de fechas a formato ISO en string para consultas SQL.
- * El resultado sigue el formato: '[YYYY-MM-DDTHH:MM:SS.sssZ,YYYY-MM-DDTHH:MM:SS.sssZ]'.
+ * El resultado sigue el formato: `'[YYYY-MM-DDTHH:MM:SS.sssZ,YYYY-MM-DDTHH:MM:SS.sssZ]'`
  *
- * @param {Date | null} fromDate - Fecha de inicio del rango (opcional). Si solo se proporciona `fromDate`, se convierte
- * esta fecha a formato ISO y se genera un rango basado en ella, utilizando una lógica interna específica.
+ * @param {Date | null} fromDate - Fecha de inicio del rango (opcional).
  * @param {Date | null} toDate - Fecha de fin del rango (opcional).
  * @param {boolean} outsideDates - Si se debe incluir fechas fuera del rango mensual.
  *
- * @returns {SerializedDateRange} - Rango en formato ISO para PostgreSQL.
+ * @returns {string} - Rango en formato ISO para PostgreSQL.
  *
  * @example
- * serializeDateRange({ fromDate: new Date('2023-11-01'), toDate: new Date('2023-11-30') });
+ * createDateRangeString({ fromDate: new Date('2023-11-01'), toDate: new Date('2023-11-30') });
  * // Devuelve: '[2023-11-01T00:00:00.000Z,2023-11-30T23:59:59.999Z]'
- *
- * serializeDateRange({ fromDate: new Date('2023-11-01') });
- * // Devuelve: '[2023-11-01T00:00:00.000Z,2023-11-07T23:59:59.999Z]' (rango generado a partir de `fromDate`)
  */
-export function serializeDateRangeObj({
+export function createDateRangeString({
    fromDate,
    toDate,
    outsideDates,
@@ -40,23 +32,23 @@ export function serializeDateRangeObj({
    fromDate?: Date | null
    toDate?: Date | null
    outsideDates?: boolean
-}): SerializedDateRange {
-   const createAndSerialize = (fromDate?: Date): SerializedDateRange =>
+}): string {
+   const createDateRangeString = (fromDate?: Date): string =>
       pipe(
          fromDateToDateRangeObj(outsideDates),
          dateRangeObjToISOStringObj,
-         serializeDateRangeISOString
+         dateRangeISOStringObjToString
       )(fromDate)
 
-   const serialize = ({ from, to }: DateRange): SerializedDateRange =>
+   const convertDateRangeToString = ({ from, to }: DateRange): string =>
       pipe(
          dateRangeObjToISOStringObj,
-         serializeDateRangeISOString
+         dateRangeISOStringObjToString
       )({ from, to })
 
    return fromDate && toDate
-      ? serialize({ from: fromDate, to: toDate })
-      : createAndSerialize(fromDate as Date)
+      ? convertDateRangeToString({ from: fromDate, to: toDate })
+      : createDateRangeString(fromDate as Date)
 }
 
 /**
@@ -65,11 +57,6 @@ export function serializeDateRangeObj({
  *
  * @param {boolean} outsideDates - Indica si se deben incluir días fuera del mes.
  * @returns {(from?: Date) => DateRange} - Función que calcula el rango basado en la fecha de inicio.
- *
- * @example
- * const range = fromDateToDateRangeObj(true)(new Date('2023-11-01'));
- * console.log(range);
- * // Devuelve: { from: Date('2023-11-01T00:00:00.000Z'), to: Date('2023-11-07T23:59:59.999Z') }
  */
 //CLAVE: esto lo podrías anular : (from?: Date) => DateRange porque ya se tipificó en
 // la segunda función, pero es util en funciones complejas
@@ -116,11 +103,12 @@ function fromDateToDateRangeObj(
  * esta implementación opta por `?? ''` para manejar posibles valores nulos o indefinidos de forma más segura.
  *
  * @example
- * const dateRange = { from: new Date('2023-11-01'), to: new Date('2023-11-30') };
- * const isoRange = dateRangeObjToISOStringObj(dateRange);
- * console.log(isoRange);
- * // Devuelve: { from: '2023-11-01T00:00:00.000Z', to: '2023-11-30T23:59:59.999Z' }
+ * const dateRange = { from: new Date("2023-11-01"), to: new Date("2023-11-30") };
+ * const result = dateRangeObjToISOStringObj(dateRange);
+ * console.log(result);
+ * // Devuelve: { from: "2023-11-01T00:00:00.000Z", to: "2023-11-30T00:00:00.000Z" }
  */
+
 export function dateRangeObjToISOStringObj(
    dateRangeObj: DateRange
 ): DateRangeISOString {
@@ -138,10 +126,10 @@ export function dateRangeObjToISOStringObj(
  * @returns {DateRange} - Objeto con fechas convertidas a `Date`.
  *
  * @example
- * const isoRange = { from: '2023-11-01T00:00:00.000Z', to: '2023-11-30T23:59:59.999Z' };
- * const range = dateRangeISOStrObjToDateRangeObj(isoRange);
- * console.log(range);
- * // Devuelve: { from: new Date('2023-11-01T00:00:00.000Z'), to: new Date('2023-11-30T23:59:59.999Z') }
+ * const dateRangeISO = { from: "2023-11-01T00:00:00.000Z", to: "2023-11-30T00:00:00.000Z" };
+ * const result = dateRangeISOStrObjToDateRangeObj(dateRangeISO);
+ * console.log(result);
+ * // Devuelve: { from: Date('2023-11-01T00:00:00.000Z'), to: Date('2023-11-30T00:00:00.000Z') }
  */
 export function dateRangeISOStrObjToDateRangeObj({
    from,
@@ -154,38 +142,39 @@ export function dateRangeISOStrObjToDateRangeObj({
 }
 
 /**
- * Convierte un objeto `DateRangeISOString` a su versión en string `[from,to]`.
+ * Convierte un objeto `DateRangeISOString` a su versión en string `'[from,to]'`.
  *
  * @param {DateRangeISOString} param0 - Objeto con fechas en formato ISO.
- * @returns {SerializedDateRange} - Formato `[from,to]` listo para enviar en queries SQL.
+ * @returns {string} - Formato `[from,to]` listo para enviar en queries SQL.
  *
  * @example
- * const isoRange = { from: '2023-11-01T00:00:00.000Z', to: '2023-11-30T23:59:59.999Z' };
- * const rangeStr = serializeDateRangeISOString(isoRange);
- * console.log(rangeStr);
+ * const dateRangeISO = { from: "2023-11-01T00:00:00.000Z", to: "2023-11-30T23:59:59.999Z" };
+ * const result = dateRangeISOStringObjToString(dateRangeISO);
+ * console.log(result);
  * // Devuelve: '[2023-11-01T00:00:00.000Z,2023-11-30T23:59:59.999Z]'
  */
-export function serializeDateRangeISOString({
+
+export function dateRangeISOStringObjToString({
    from,
    to,
-}: DateRangeISOString): SerializedDateRange {
+}: DateRangeISOString): string {
    return `[${from},${to}]`
 }
 
 /**
  * Convierte un string con rango de fechas en formato ISO (`[from,to]`) a un objeto `DateRange` con valores `Date`.
  *
- * @param {SerializedDateRange} strDateRange - Cadena con fechas en formato '[YYYY-MM-DDTHH:MM:SS.sssZ,YYYY-MM-DDTHH:MM:SS.sssZ]'.
+ * @param {string} strDateRange - Cadena con fechas en formato `'[YYYY-MM-DDTHH:MM:SS.sssZ,YYYY-MM-DDTHH:MM:SS.sssZ]'`.
  * @returns {DateRange} - Objeto con fechas convertidas a `Date`.
  *
  * @example
- * const strRange = '[2023-11-01T00:00:00.000Z,2023-11-30T23:59:59.999Z]';
- * const range = serializedDateRangeToDateRangeObj(strRange);
- * console.log(range);
+ * const rangeStr = '[2023-11-01T00:00:00.000Z,2023-11-30T23:59:59.999Z]';
+ * const result = stringDateRangeToDateRangeObj(rangeStr);
+ * console.log(result);
  * // Devuelve: { from: new Date('2023-11-01T00:00:00.000Z'), to: new Date('2023-11-30T23:59:59.999Z') }
  */
-export const serializedDateRangeToDateRangeObj = (
-   strDateRange: SerializedDateRange
+export const stringDateRangeToDateRangeObj = (
+   strDateRange: string
 ): DateRange => {
    const dates = strDateRange.replace(/[\[\]']+/g, '').split(',')
    return {
@@ -197,17 +186,18 @@ export const serializedDateRangeToDateRangeObj = (
 /**
  * Convierte un string con rango de fechas en formato ISO (`[from,to]`) a un objeto `DateRangeISOString`.
  *
- * @param {SerializedDateRange} strDateRange - Cadena con fechas en formato '[YYYY-MM-DDTHH:MM:SS.sssZ,YYYY-MM-DDTHH:MM:SS.sssZ]'.
+ * @param {string} strDateRange - Cadena con fechas en formato `'[YYYY-MM-DDTHH:MM:SS.sssZ,YYYY-MM-DDTHH:MM:SS.sssZ]'`.
  * @returns {DateRangeISOString} - Objeto con fechas en formato string (`from` y `to`).
  *
  * @example
- * const strRange = '[2023-11-01T00:00:00.000Z,2023-11-30T23:59:59.999Z]';
- * const isoRange = stringDateRangeToISOStringObj(strRange);
- * console.log(isoRange);
- * // Devuelve: { from: '2023-11-01T00:00:00.000Z', to: '2023-11-30T23:59:59.999Z' }
+ * const rangeStr = '[2023-11-01T00:00:00.000Z,2023-11-30T23:59:59.999Z]';
+ * const result = stringDateRangeToISOStringObj(rangeStr);
+ * console.log(result);
+ * // Devuelve: { from: "2023-11-01T00:00:00.000Z", to: "2023-11-30T23:59:59.999Z" }
  */
+
 export const stringDateRangeToISOStringObj = (
-   strDateRange: SerializedDateRange
+   strDateRange: string
 ): DateRangeISOString => {
    const dates = strDateRange.replace(/[\[\]']+/g, '').split(',')
    return {

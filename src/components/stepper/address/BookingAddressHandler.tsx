@@ -30,12 +30,10 @@ export default function BookingAddressHandler({
    ...props
 }) {
    useCheckDatedStepper({ userId, isAdmin })
-   //console.log('BookingManagementUserHandler @@@->')
    const dispatch = useDispatch()
 
    /** BookingManagementForm **/
    const bookingManagement = useSelector(selectBookingManagement)
-   console.log('BookingAddressHandler bookingManagement ->', bookingManagement)
    const form = useForm({
       resolver: zodResolver(FormSchema),
       defaultValues: {

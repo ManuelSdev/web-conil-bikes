@@ -20,28 +20,28 @@ import { pipe } from '../functions'
  * @param {Date} fromDate - objeto Date con la fecha de inicio del rango
  * @returns {string} - string con el rango de fechas en formato ISO: '[from,to]'
  */
-export function createDateRangeString({
+export function serializeDateRange({
    fromDate = null,
    toDate = null,
    outsideDates = false,
 }) {
-   const createDateRangeString = (fromDate) =>
+   const serializeDateRange = (fromDate) =>
       pipe(
          fromDateToDateRangeObj(outsideDates),
          dateRangeObjToISOStringObj,
-         dateRangeISOStringObjToString
+         serializeDateRangeISOString
       )(fromDate)
 
    const convertDateRangeToString = ({ from, to }) =>
       pipe(
          dateRangeObjToISOStringObj,
-         dateRangeISOStringObjToString
+         serializeDateRangeISOString
       )({ from, to })
 
    const dateRangeString =
       fromDate && toDate
          ? convertDateRangeToString({ from: fromDate, to: toDate })
-         : createDateRangeString(fromDate)
+         : serializeDateRange(fromDate)
 
    return dateRangeString
 }
@@ -89,7 +89,7 @@ export function dateRangeISOStrObjToDateRangeObj({ from, to }) {
    }
 }
 
-export function dateRangeISOStringObjToString({ from, to }) {
+export function serializeDateRangeISOString({ from, to }) {
    return `[${from},${to}]`
 }
 
@@ -98,7 +98,7 @@ export function dateRangeISOStringObjToString({ from, to }) {
  * @param {string} strDateRange - format  '[2023-11-06T23:00:00.000Z,2023-11-16T23:00:00.000Z]'
  * @returns {object} - { from: Date, to: Date }
  */
-export const stringDateRangeToDateRangeObj = (strDateRange) => {
+export const serializedDateRangeToDateRangeObj = (strDateRange) => {
    const dates = strDateRange.replace(/[\[\]']+/g, '').split(',')
    const from = new Date(dates[0])
    const to = new Date(dates[1])
