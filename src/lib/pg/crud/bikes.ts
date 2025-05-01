@@ -11,19 +11,9 @@ import {
    findAvailableTypes,
    findAppBikeConfigSegments,
 } from '../repos/bikes'
+import { dbErrorResponse } from '@/app/api/utils'
 
 //console.log( '######### CLIENT importado en api/bikes/available/[dateRange]/route.js')
-
-const dbErrorResponse = (error) => {
-   console.error('Error en consulta a la base de datos: ', error)
-   return NextResponse.json(
-      {
-         succes: false,
-         message: 'Error en consulta a la base de datos',
-      },
-      { status: 500 }
-   )
-}
 
 export async function getAvailableSizesInRange({ dateRange }) {
    try {
@@ -79,7 +69,6 @@ export async function getAvailableBikes({ dateRange, size, type, range }) {
       })
       return NextResponse.json(
          { succes: true, data: { availableBikes } },
-         { status: 201 },
          { status: 201 }
       )
    } catch (error) {

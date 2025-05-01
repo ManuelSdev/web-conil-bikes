@@ -15,6 +15,7 @@ export async function GET(req) {
    }
    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
    console.warn(chalk.yellow('sssssssssss'))
+   cookieStore.set('cookieName', 'sessionCookie', cookieOptions)
 
    const searchParams = req.nextUrl.searchParams
    const roleParam = searchParams.get('role')
@@ -27,7 +28,7 @@ export async function GET(req) {
    //TODO: este verified solo indica que la cookie se ha verificado, no que el usuario haya
    //verificado su email. Gestiona el caso de no verificación de email en el middleware
    try {
-      const decodeClaims = await verifySessionCookie(sessionCookie.value)
+      const decodeClaims = await verifySessionCookie(sessionCookie)
       //TODO: parche para pruebas , revisa el uso de roles
       //TODO los user actuales tienen appRole, el admin test no, usa appRole en adelante al crear usuarios
       const { appRole, email_verified: verified } = decodeClaims

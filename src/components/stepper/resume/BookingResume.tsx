@@ -1,12 +1,9 @@
 // @ts-nocheck
 import { BIKE_RANGES_MAP, BIKE_TYPES_MAP } from '@/utils/app/appValues'
-import React from 'react'
 
-import { add, format } from 'date-fns'
-import Image from 'next/image'
-import { Separator } from '@/components/ui/separator'
-import clsx from 'clsx'
 import { cn } from '@/utils/functions'
+import { format } from 'date-fns'
+import Image from 'next/image'
 /*
 import {
    UserCircle,
@@ -31,22 +28,18 @@ import {
 } from '@heroicons/react/20/solid'
  */
 import {
-   CircleUserRound as UserCircle,
-   Check as CheckIcon,
-   Clock as ClockIcon,
-   HelpCircle as QuestionMarkCircleIcon,
-   X as XMarkIcon,
-   Calendar as CalendarDaysIcon,
-   CreditCard as CreditCardIcon,
-   User as UserCircleIcon,
-   Mail as Envelope,
-   Phone,
-   MapPin,
-   Bike as Bicycle,
+   ArrowLeft,
    ArrowRight,
    CornerDownLeft as ArrowUDownLeft,
+   CalendarDays,
+   Mail as Envelope,
+   MapPin,
+   Phone,
+   CircleUserRound as UserCircle,
 } from 'lucide-react'
-import { CalendarDays } from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+
 export default function BookingResume({
    name,
    phone,
@@ -59,8 +52,8 @@ export default function BookingResume({
    dayPrice,
    bookingPrice,
    duration,
-   renderSubmitButton,
-   renderPrevButton,
+   prevUrl,
+   handleSubmit,
 }) {
    const { from, to } = dateRange
    console.log('dateRange en Bookingresume ->', dateRange)
@@ -96,8 +89,23 @@ export default function BookingResume({
                   />
                   <div className="mt-12">
                      <div className="mx-auto flex flex-col gap-5 lg:px-6">
-                        {renderSubmitButton(' grow')}
-                        {renderPrevButton(' grow')}
+                        <Button asChild variant="custom" className={'grow'}>
+                           <Link href={prevUrl}>
+                              <ArrowLeft
+                                 weight="bold"
+                                 className="mr-2 h-4 w-4"
+                              />
+                              atrás
+                           </Link>
+                        </Button>
+                        <Button
+                           type="submit"
+                           variant="custom"
+                           className={'grow'}
+                           onClick={handleSubmit}
+                        >
+                           CONFIRMAR RESERVA
+                        </Button>
                      </div>
                   </div>
                </div>

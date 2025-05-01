@@ -19,6 +19,9 @@ import StepShell from '@/components/stepper/StepShell'
 import AvailableBikeListHandler from '@/components/stepper/bikes/AvailableBikeListHandler'
 import BikesStepHandler from '@/components/stepper/bikes/BikesStepHandler'
 import NotifyCart from '@/components/stepper/notifyCart/NotifyCart'
+import { verifySessionCookie } from '@/lib/firebase/admin/verifySessionCookie'
+import { NextResponse } from 'next/server'
+import { logout } from '@/domain/services/authServices'
 
 /**
  * CLAVE
@@ -26,24 +29,52 @@ import NotifyCart from '@/components/stepper/notifyCart/NotifyCart'
  */
 export default async function BikesStepPage({ params }) {
    const cookieStore = await cookies()
+   const all = cookieStore.getAll()
+   //console.log('all cookies ', all)
    const searchKeysCookie = cookieStore.get('searchKeys')
    const resolvedUrlCookie = cookieStore.get('resolvedUrl')
+   const userSessionCookie = cookieStore.get('userSession')
+   //console.log('userSessionCookie ', userSessionCookie)
+   //const response = NextResponse
    //corre
 
-   console.log('searchKeysCookie ', searchKeysCookie)
+   // console.log('searchKeysCookie ', searchKeysCookie)
    //const selectedBikeCookie = cookies().get('selectedBike')
-
+   //uf('stepperDated')
    //Cargo las searchKeys de la cookie
    const loadedSearchKeys = searchKeysCookie
       ? JSON.parse(searchKeysCookie.value)
       : null
    console.log('loadedSearchKeys ', loadedSearchKeys)
-   const userAuth = await getUserPageAuth()
-   const { isLogged } = userAuth
-   const loadedPreviusStateData = await loadPreviusStateData(
-      loadedSearchKeys,
-      isLogged
-   )
+   let isLogged = false
+   try {
+      if (!userSessionCookie) throw new Error('No hay cookie de sesión')
+      //Compruebo loggin mediante la cookie de sesión
+      const decodeClaims = await verifySessionCookie(userSessionCookie)
+      isLogged = true
+      //Compruebo si hay que recuperar los datos de la búsqueda previa
+      const loadedPreviusStateData =
+         await loadPreviusStateData(loadedSearchKeys)
+   } catch (error) {
+      const { code, message } = error
+      console.error('Error al verificar la cookie de sesión', error)
+      // console.dir(error, { depth: null })
+      if (
+         code === 'auth/session-cookie-expired' ||
+         code === 'auth/session-cookie-revoked'
+      ) {
+         //   logout(userSessionCookie.name)
+         // Si la cookie de sesión ha expirado, redirijo a la página de login
+         //redirect('/login')
+         //  console.log('La cookie de sesión ha expirado')
+      }
+      // const isLogged = false
+   }
+   console.log('isLogged ', isLogged)
+   //const userAuth = await getUserPageAuth()
+   //const { isLogged } = userAuth
+   const loadedPreviusStateData = await loadPreviusStateData(loadedSearchKeys)
+   console.log('loadedPreviusStateData ', loadedPreviusStateData)
    /*
    const selectedBike = selectedBikeCookie
       ? JSON.parse(selectedBikeCookie.value)
@@ -102,11 +133,11 @@ async function getPageData(userSessionCookie) {
  * También se encarga de las bicicletas disponibles en
  * función de los datos de búsqueda
  */
-async function loadPreviusStateData(searchKeys, isLogged) {
+async function loadPreviusStateData(searchKeys) {
    //'use server'
    //https://github.com/vercel/next.js/discussions/54075
    console.log('searchKeys ', searchKeys)
-   console.log('isLogged ', isLogged)
+
    if (!searchKeys) return null
 
    const { dateRange, size, type, range } = searchKeys
@@ -127,7 +158,9 @@ async function loadPreviusStateData(searchKeys, isLogged) {
    const availableBikesRes = await getAvailableBikes({
       ...searchKeys,
    })
-   const availableBikes = await availableBikesRes.json()
+   const {
+      data: { availableBikes },
+   } = await availableBikesRes.json()
 
    return {
       availableSizes,

@@ -78,8 +78,7 @@ async function verifyCustomClaimsAdmin(accessToken) {
 }
 
 async function setCookies({ isAdmin, accessToken }) {
-   // const expiresIn = 60 * 60 * 24 * 5 * 1000
-   const expiresIn = 20 * 1000 // 20 segundos en ms
+   const expiresIn = 60 * 60 * 24 * 5 * 1000
    const cookieStore = await cookies()
 
    try {

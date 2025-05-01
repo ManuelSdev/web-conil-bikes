@@ -13,17 +13,19 @@ export async function getUserPageAuth() {
    if (!userSessionCookie) return { isLogged: false }
 
    try {
-      const decodeClaims = await verifySessionCookie(userSessionCookie.value)
+      const decodeClaims = await verifySessionCookie(userSessionCookie)
 
       //  if (!decodeClaims)
 
       const { name, email, phone_number: phone } = decodeClaims
 
       const resUserId = await getUserIdByEmail({ email })
-      const userId = await resUserId.json()
+      const {
+         data: { userId },
+      } = await resUserId.json()
       return { name, email, phone, userId, isLogged: true }
    } catch (error) {
-      console.log('getUserPageAuth error -> ', error)
+      console.error('getUserPageAuth error -> ', error)
       return { isLogged: false }
    }
 }
@@ -38,7 +40,7 @@ export async function getAdminUserAuth() {
    const adminSessionCookie = cookies().get('adminSession')
 
    try {
-      const decodeClaims = await verifySessionCookie(adminSessionCookie.value)
+      const decodeClaims = await verifySessionCookie(adminSessionCookie)
       //const { name, email, phone_number: phone } = decodeClaims
       return decodeClaims
    } catch (error) {
@@ -50,7 +52,7 @@ export async function getAdminUserAuth() {
 export async function getAdminData() {
    const adminSessionCookie = cookies().get('adminSession')
    try {
-      const decodeClaims = await verifySessionCookie(adminSessionCookie.value)
+      const decodeClaims = await verifySessionCookie(adminSessionCookie)
       const { name, email, phone_number: phone } = decodeClaims
       const adminData = findUserByEmail({ email })
 
@@ -64,7 +66,7 @@ export async function getAdminData() {
 export async function getAdminId() {
    const adminSessionCookie = cookies().get('adminSession')
    try {
-      const decodeClaims = await verifySessionCookie(adminSessionCookie.value)
+      const decodeClaims = await verifySessionCookie(adminSessionCookie)
       console.log('decodeClaims -> ', decodeClaims)
       const { name, email, phone_number: phone } = decodeClaims
       const adminId = findUserIdByEmail({ email })

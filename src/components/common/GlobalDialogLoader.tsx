@@ -1,25 +1,13 @@
 // @ts-nocheck
 'use client'
-import { Button } from '@/components/ui/button'
-import {
-   Dialog,
-   DialogClose,
-   DialogContent,
-   DialogDescription,
-   DialogFooter,
-   DialogHeader,
-   DialogTitle,
-   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import SpinnerRing from './SpinnerRing'
-import BikeWheel from '../svg/BikeWheel'
-import { useSelector } from 'react-redux'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import {
    selectAppIsLoadingData,
    selectAppIsLoadingPage,
 } from '@/lib/redux/slices/appConfigSlice'
+import { useSelector } from 'react-redux'
+import BikeWheel from '../svg/BikeWheel'
+import SpinnerRing from './SpinnerRing'
 
 export function GlobalDialogLoader({ open, onOpenChange, spinner = true }) {
    const isLoadingData = useSelector(selectAppIsLoadingData)
@@ -34,7 +22,7 @@ export function GlobalDialogLoader({ open, onOpenChange, spinner = true }) {
       >
          <DialogContent
             closeIcon={false}
-            className="border-0 bg-transparent shadow-none duration-0 focus:outline-none	focus-visible:outline-none sm:max-w-md"
+            className="border-0 bg-transparent shadow-none duration-0 focus:outline-none focus-visible:outline-none sm:max-w-md"
          >
             <div className={'mx-auto'}>
                {spinner ? <SpinnerRing /> : <BikeWheel />}

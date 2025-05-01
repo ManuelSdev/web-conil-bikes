@@ -1,18 +1,19 @@
 // @ts-nocheck
 import 'server-only'
 
-import { cache } from 'react'
 import { NextResponse } from 'next/server'
 
-import {
-   addBooking,
-   findBookingDatesInRange,
-   findBookingOnDate,
-   findBookingBikesById,
-   findBookingById,
-} from '../repos/booking'
+import { dbErrorResponse } from '@/app/api/utils'
 import getOrderResumeEmail from '@/lib/react-email/orderResume'
 import sendGridSendEmail from '@/lib/sendGrid/sendEmail'
+import { serializeDateRangeISOString } from '@/utils/datesFns/dateUtils'
+import {
+   addBooking,
+   findBookingBikesById,
+   findBookingById,
+   findBookingDatesInRange,
+   findBookingOnDate,
+} from '../repos/booking'
 //TODO: meter try catch en todas las funciones
 //TODO: usar caché next.js y separar la lógica de la API de la logica de las server functions
 export async function getBookingDatesInRange(dateRange) {
@@ -50,7 +51,7 @@ export async function getBookingWithBikesById(bookingId) {
 }
 
 export async function createBooking(data) {
-   const strDateRange = serializeDateRangeISOString(data.dateRangeObj)
+   const strDateRange = serializeDateRangeISOString(data.dateRange)
    const addBookingData = { ...data, dateRange: strDateRange }
    try {
       const { bookingId } = await addBooking(addBookingData)
@@ -58,27 +59,22 @@ export async function createBooking(data) {
          'Reserva creada en createBooking con Id de reserva -> ',
          bookingId
       )
-      // console.log('data en createBooking -> ', data)
+
       const html = getOrderResumeEmail({
          ...data,
          bookingId,
       })
-
       const to = data.email
       const subject = 'Resumen de tu reserva en Conil Bikes'
-
       const sendResult = await sendGridSendEmail({ to, subject, html })
-      return NextResponse.json(bookingId, { status: 201 })
-   } catch (error) {
-      console.log('error en createBooking -> ', error)
-      //Si hay error, se hace throw desde el trigger, asi que tienes que meterlo en un try catch
-      //El error que pilla el try catch tiene forma {status: STATUS, data: DATA}
-      //DATA es el primer objeto que le pasas a NextResponse.json
-      //STATUS es el segundo objeto que le pasas a NextResponse.json
-      return NextResponse.json({ error }, { status: 500 })
-   }
 
-   console.log('result en createBooking -> ', result)
+      return NextResponse.json(
+         { succes: true, data: { bookingId } },
+         { status: 201 }
+      )
+   } catch (error) {
+      return dbErrorResponse(error)
+   }
 
    //
 }

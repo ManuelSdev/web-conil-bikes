@@ -12,6 +12,7 @@ import {
 } from '../repos/users'
 import { NextResponse } from 'next/server'
 import { th } from 'date-fns/locale'
+import { dbErrorResponse } from '@/app/api/utils'
 
 export async function getMatchingUsers({ email, phone }) {
    //console.log('dateRange en getAvailableSizesInRange -> ', dateRange)
@@ -66,9 +67,14 @@ export async function getUserIdByEmail({ email }) {
       //console.log('@@ CRUD FN getUserIdByEmail @@')
       const userId = await findUserIdByEmail({ email })
       //console.log('appUser en getUserIdByEmail-> ', userId)
+      return NextResponse.json(
+         { succes: true, data: { userId } },
+         { status: 201 }
+      )
       return NextResponse.json(userId, { status: 201 })
    } catch (error) {
       //console.log('### ERROR CRUD api/getUserIdByEmail -> ', error)
+      return dbErrorResponse(error)
       return NextResponse.json(error, { status: 500 })
    }
 }

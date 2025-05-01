@@ -8,7 +8,7 @@ import {
    getUserPageAuth,
 } from '@/utils/serverFns/serverFns'
 import React from 'react'
-
+//TODO revisar si es mejor tener userAuth en el estado desde que haces login
 export default async function UserBookingStepperPage({ params }) {
    const { segmentList } = await getAppBikeSegments()
    const userAuth = await getUserPageAuth()

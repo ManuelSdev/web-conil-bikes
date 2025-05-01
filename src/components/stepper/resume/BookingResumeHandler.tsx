@@ -16,6 +16,7 @@ import useDialogWindow from '@/components/common/useDialogWindow'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { use } from 'react'
+import AlertDialogLoader from '@/components/common/AlertDialogLoader'
 
 export default function BookingResumeHandler({
    setStep,
@@ -69,69 +70,36 @@ export default function BookingResumeHandler({
       event.preventDefault()
       const urlAfterBooking = isAdmin ? '/dashboard/bookings/calendar' : '/'
       //const emailHtml = getOrderResumeEmail(bookingData)
-      try {
-         const res = await createBooking(fullData).unwrap()
-         console.log('res ->', res)
-         /*  const desc = (
-            <span>
-               Te hemos enviado un correo electrónico a{' '}
-               <span className="font-semibold">{email}</span> con los detalles
-               de tu reserva
-            </span>
-         )*/
-         handleSetDialog({
-            open: true,
-            title: 'Tu reserva ha sido registrada',
-            description: 'Recibiras un correo con los detalles de tu reserva',
-            closeText: 'Aceptar',
-            onOpenChange: (bool) => router.push(urlAfterBooking),
-         })
-      } catch (error) {
-         console.log('error ->', error)
-         handleSetDialog({
-            open: true,
-            title: 'Ha ocurrido un error',
-            description:
-               'No se ha podido registrar tu reserva. Por favor, inténtalo de nuevo pasados unos minutos.',
-            closeText: 'Aceptar',
-            onOpenChange: (bool) => router.push(urlAfterBooking),
-         })
-      }
-   }
 
-   const renderPrevButton = (className) => {
-      const prevUrl = isAdmin
-         ? `/admin/bookings/new/address?userId=${userId}`
-         : '/booking/address'
-      return (
-         <Button asChild variant="custom" className={className}>
-            <Link href={prevUrl}>
-               <ArrowLeft weight="bold" className="mr-2 h-4 w-4" />
-               atrás
-            </Link>
-         </Button>
-      )
+      const { succes } = await createBooking(fullData).unwrap()
+      succes
+         ? handleSetDialog({
+              open: true,
+              title: 'Tu reserva ha sido registrada',
+              description: 'Recibiras un correo con los detalles de tu reserva',
+              closeText: 'Aceptar',
+              onOpenChange: (bool) => router.push(urlAfterBooking),
+           })
+         : handleSetDialog({
+              open: true,
+              title: 'Ha ocurrido un error',
+              description:
+                 'No se ha podido registrar tu reserva. Por favor, inténtalo de nuevo pasados unos minutos.',
+              closeText: 'Aceptar',
+              onOpenChange: (bool) => router.push(urlAfterBooking),
+           })
    }
+   const prevUrl = isAdmin
+      ? `/admin/bookings/new/address?userId=${userId}`
+      : '/booking/address'
 
-   const renderSubmitButton = (className) => (
-      <Button
-         type="submit"
-         variant="custom"
-         className={className}
-         onClick={handleSubmit}
-      >
-         CONFIRMAR RESERVA
-      </Button>
-   )
-   console.log('isLoading ->', isSuccess)
    return (
       <div>
-         <DialogLoader open={isLoading} />
+         <AlertDialogLoader open={isLoading} />
          <DialogWindow {...dialog} />
-
          <BookingResume
-            renderPrevButton={renderPrevButton}
-            renderSubmitButton={renderSubmitButton}
+            prevUrl={prevUrl}
+            handleSubmit={handleSubmit}
             {...fullData}
          />
       </div>

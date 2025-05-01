@@ -34,3 +34,17 @@ Esto es por si la consola no imprime objetos animados.
       console.error('Error capturado: ', errorMessage, error)
    }
 */
+
+export const dbErrorObject = (error) =>
+   console.error('Error en consulta a la base de datos: ', error)
+
+export const dbErrorResponse = (error) => {
+   console.error('Error en consulta a la base de datos: ', error)
+   return NextResponse.json(
+      {
+         succes: false,
+         message: 'Error en consulta a la base de datos',
+      },
+      { status: 500 }
+   )
+}

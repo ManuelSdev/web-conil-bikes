@@ -33,6 +33,7 @@ export default function AvailableBikeListHandler({
       useLazyGetAvailableBikesQueryHook()
 
    const bikesToShow = loadedAvailableBikes || availableBikes
+   console.log('bikesToShow ->>>', loadedAvailableBikes)
    /**
     * Si el usuario no está logueado, guardo la selección de la bici en local storage
     * y los parámetros de búsqueda y la url en cookies
@@ -46,7 +47,7 @@ export default function AvailableBikeListHandler({
       const selectedBikeCookieValue = JSON.stringify(bike)
       const byteSize = (str) => new Blob([str]).size
       window.localStorage.setItem('selectedBike', selectedBikeCookieValue)
-      triggerCookie({ name: 'searchKeys', value: searchKeyscookieValue })
+      triggerCookie({ name: 'searchKeys', value: searchKeysCookieValue })
       triggerCookie({ name: 'resolvedUrl', value: '/booking/bikes' })
    }
    return (
