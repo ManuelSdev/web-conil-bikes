@@ -4,6 +4,7 @@
          "previewLimit": 50,
          "server": "34.23.169.234",
          "port": 5432,
+         "askForPassword": true,
          "driver": "PostgreSQL",
          "name": "TestDB",
          "database": "postgres",

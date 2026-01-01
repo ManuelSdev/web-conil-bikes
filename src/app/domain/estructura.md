@@ -94,3 +94,42 @@ src/
                        +----------------------------+
 
 https://github.com/carlosazaustre/next-hexagonal-starter
+
+# MODEL
+
+    En resumen, en el model te concentras en qué es un usuario y en construirlo correctamente.
+
+# DOMAIN/SERVICES
+
+     Funciones en /domain/services/user
+
+Por otro lado, en services se ubica la lógica de negocio relacionada con el usuario que no forma parte de la simple construcción del objeto, sino que se encarga de procesos, validaciones o transformaciones más complejas que involucran al usuario. Por ejemplo:
+
+- Validaciones de negocio avanzadas:
+  Funciones que verifican, por ejemplo, si un usuario cumple ciertos criterios (más allá de la simple validez de su email).
+  Ejemplo: isUserEligibleForDiscount(user: User): boolean
+- Transformaciones o enriquecimiento de datos:
+  Funciones que operan sobre un usuario para, por ejemplo, normalizar el nombre, calcular algún score, o transformar el modelo según reglas específicas del negocio.
+  Ejemplo: enrichUserData(user: User): User
+- Operaciones que involucren lógica de negocio compleja:
+  Si se llega a necesitar algún procesamiento que coordine acciones entre el usuario y otras entidades (aunque muchas veces estas funciones pueden pertenecer a un service que abarque más de un modelo), se ubicarán aquí.
+
+Ejemplo sencillo en /domain/services/user.ts:
+import { User } from '../models/user';
+
+    // Valida reglas de negocio más elaboradas sobre el usuario.
+    export const isUserEligibleForPremium = (user: User): boolean => {
+    // Supongamos que un usuario es elegible si su nombre tiene más de 3 caracteres y
+    // posee un email institucional.
+    return user.name.length > 3 && user.email.endsWith('@midominio.com');
+    };
+
+    // Enriquecer datos del usuario con, por ejemplo, un "displayName" formateado.
+    export const enrichUserData = (user: User): User => {
+    const displayName = user.name
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    // Devuelves un nuevo objeto enriquecido (manteniendo la inmutabilidad)
+    return { ...user, name: displayName };
+    };

@@ -48,10 +48,10 @@ export default function useFirebaseAuth() {
       //   setLoading(true)
       let resolvedUrl
       try {
-         const res = await createSessionCookieTrigger({
+         const res = await {
             accessToken,
             isAdmin,
-         }).unwrap()
+         }.unwrap()
          /**
           * Se intenta obtener `res.data?.resolvedUrl`.
           * Si no existe data o existe pero no existe resolvedUrl,

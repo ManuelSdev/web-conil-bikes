@@ -21,7 +21,7 @@ import BikesStepHandler from '@/components/stepper/bikes/BikesStepHandler'
 import NotifyCart from '@/components/stepper/notifyCart/NotifyCart'
 import { verifySessionCookie } from '@/lib/firebase/admin/verifySessionCookie'
 import { NextResponse } from 'next/server'
-import { logout } from '@/domain/services/authServices'
+import { logout } from '@/core/domain/services/authServices'
 
 /**
  * CLAVE

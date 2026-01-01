@@ -5,8 +5,8 @@ import React from 'react'
 import { app } from './firebaseAdmin'
 import { getAuth } from 'firebase-admin/auth'
 import { cookies } from 'next/headers'
-import { CustomError } from '@/domain/models/error/CustomError'
-import { logout } from '@/domain/services/authServices'
+import { CustomError } from '@/core/domain/models/error/CustomError'
+import { logout } from '@/core/domain/services/authServices'
 
 export async function verifySessionCookie(sessionCookie) {
    // console.log('verifying session cookie ->>>', sessionCookie)
